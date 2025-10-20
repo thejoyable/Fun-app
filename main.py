@@ -163,7 +163,7 @@ def main():
             "Synonym Replacement %",
             min_value=10,
             max_value=50,
-            value=30,
+            value=50,
             step=5,
             help="Percentage of words to consider for synonym replacement"
         )
@@ -172,7 +172,7 @@ def main():
             "Sentence Restructuring %",
             min_value=10,
             max_value=60,
-            value=40,
+            value=60,
             step=5,
             help="Probability of restructuring sentence patterns"
         )
