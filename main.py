@@ -306,14 +306,16 @@ def main():
                 else:
                     st.markdown(f"<div class='output-box'>{transformed}</div>", unsafe_allow_html=True)
                 
-                # --- Copy to Clipboard Button ---
+                # --- Copyable Output Text ---
                 st.markdown("<br>", unsafe_allow_html=True)
-                col1, col2, col3 = st.columns([1, 1, 1])
-                with col2:
-                    # Using st.code for easy copy functionality
-                    with st.expander("📋 Click to Copy Output"):
-                        st.code(transformed, language=None)
-                        st.caption("Select all text above (Ctrl+A or Cmd+A) and copy (Ctrl+C or Cmd+C)")
+                st.markdown("**📋 Copy Your Transformed Text Below:**")
+                st.text_area(
+                    "Output (Select and Copy)",
+                    transformed,
+                    height=300,
+                    key="copyable_output",
+                    help="Select all text (Ctrl+A or Cmd+A) and copy (Ctrl+C or Cmd+C)"
+                )
                 
                 # --- Statistics Display ---
                 st.markdown("---")
