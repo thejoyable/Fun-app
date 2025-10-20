@@ -1,326 +1,208 @@
 import streamlit as st
-import re
 import random
-from transformer.app import AcademicTextHumanizer, NLP_GLOBAL, download_nltk_resources
-from nltk.tokenize import word_tokenize, sent_tokenize
+import re
+from typing import List, Tuple
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import wordnet
 
-try:
-    import language_tool_python
-    GRAMMAR_CHECKER_AVAILABLE = True
-except ImportError:
-    GRAMMAR_CHECKER_AVAILABLE = False
+# Download required NLTK data
+def download_nltk_resources():
+    resources = ['punkt', 'averaged_perceptron_tagger', 'wordnet', 'omw-1.4']
+    for resource in resources:
+        try:
+            nltk.data.find(f'tokenizers/{resource}')
+        except LookupError:
+            nltk.download(resource, quiet=True)
 
-
-def fix_punctuation_spacing(text):
-    """Fix spacing issues around punctuation marks."""
-    text = re.sub(r'\s+([.,;:!?\'\")])', r'\1', text)
-    text = re.sub(r'([\(\[\{\"\'"])\s+', r'\1', text)
-    text = re.sub(r'([.!?])\s*([A-Z])', r'\1 \2', text)
-    text = re.sub(r'([,;:])\s*([^\s])', r'\1 \2', text)
-    text = re.sub(r'\s{2,}', ' ', text)
-    text = re.sub(r"\s+('\s*[tsmredvl]{1,3})\b", r"\1", text, flags=re.IGNORECASE)
-    return text.strip()
+download_nltk_resources()
 
 
-def strategic_ai_phrase_replacement(text):
+class EnhancedAcademicHumanizer:
     """
-    Replace AI phrases but maintain academic tone (not too casual).
-    Based on the human-written examples provided.
+    Advanced text humanizer that mimics natural academic writing patterns
+    by implementing subtle variations, clause restructuring, and natural flow.
     """
-    # Strategic replacements - maintain formality but change phrasing
-    strategic_map = {
-        # Keep academic but change structure
-        r'\bform a (\w+) legal framework that governs\b': r'constitute a \1 legal system that controls',
-        r'\baim to provide\b': r'have the main purpose of providing',
-        r'\baim to\b': r'have the purpose of',
-        r'\bhave significantly increased\b': 'has grown enormously',
-        r'\bhas significantly increased\b': 'has grown enormously',
-        r'\baddresses various\b': 'regulates a variety of',
-        r'\baddresses\b': 'regulates',
-        r'\bIt also empowers\b': 'What is more, it gives the power to',
-        r'\balso empowers\b': 'gives the power to',
-        r'\bto investigate and prosecute\b': 'to investigate such crimes and prosecute the offenders',
-        r'\bhave further strengthened\b': 'have further solidified',
-        r'\bhas further strengthened\b': 'has further solidified',
-        r'\bto deal with evolving\b': 'to confront changing',
-        r'\bto deal with\b': 'to confront',
-        r'\bHowever, despite these efforts\b': 'Yet, notwithstanding all these measures',
-        r'\bdespite these efforts\b': 'notwithstanding these measures',
-        r'\bremains a challenge\b': 'still proves to be difficult',
-        r'\bdue to the technical complexity\b': 'owing to the technical nature',
-        r'\black of digital literacy\b': 'unawareness of the population about the digital medium',
-        r'\bjurisdictional issues in the borderless\b': 'jurisdictional conflicts in the internet\'s borderless',
-        r'\bmarks a step towards\b': 'will be a major step towards the realization of',
-        r'\bis a step towards\b': 'will be a step towards the realization of',
-        r'\bensuring individual privacy\b': 'privacy rights of individuals',
-        r'\bresponsible data handling by organizations\b': 'responsible handling of data by firms',
-        r'\bthere is a growing need for\b': 'has given rise to a demand for',
-        r'\bmore robust, adaptive, and transparent\b': 'more robust, but also be very flexible and transparent',
-        r'\balong with enhanced\b': 'coupled with a better',
-        r'\bcontinue to emphasize\b': 'are announcing the need for',
-        r'\bthe balance between regulation and freedom\b': 'a regulatory balance',
-        r'\bto foster innovation while protecting\b': 'that would allow for the free flow of innovations and at the same time secure',
-        r'\bfrom digital harm\b': 'from digital harm',
-    }
     
-    for pattern, replacement in strategic_map.items():
-        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
-    
-    return text
-
-
-def natural_sentence_restructuring(text):
-    """
-    Restructure sentences with natural word order variations.
-    Keep academic tone but add human-like construction.
-    """
-    sentences = sent_tokenize(text)
-    restructured = []
-    
-    i = 0
-    while i < len(sentences):
-        sent = sentences[i]
-        words = sent.split()
-        word_count = len(words)
+    def __init__(self):
+        # Academic connectors for natural flow
+        self.sentence_starters = [
+            "Furthermore,", "Moreover,", "In addition,", "Additionally,",
+            "What is more,", "Notably,", "Significantly,", "Importantly,"
+        ]
         
-        # Split long sentences (>22 words) - keep somewhat long for academic style
-        if word_count > 22:
-            break_words = ['and', 'but', 'while', 'though', 'as', 'which']
-            split_done = False
+        self.mid_sentence_transitions = [
+            "which", "that", "where", "as", "while", "though", "although",
+            "yet", "however", "nevertheless", "nonetheless"
+        ]
+        
+        # Passive voice helper phrases
+        self.passive_phrases = [
+            ("made", "was made"),
+            ("created", "was created"),
+            ("established", "was established"),
+            ("developed", "was developed"),
+            ("introduced", "was introduced"),
+            ("presented", "was presented"),
+            ("designed", "was designed")
+        ]
+        
+        # Synonym replacements for natural academic tone
+        self.synonym_map = {
+            "very": ["extremely", "highly", "particularly", "remarkably", "notably"],
+            "important": ["significant", "crucial", "pivotal", "essential", "vital"],
+            "big": ["substantial", "considerable", "major", "significant"],
+            "good": ["beneficial", "advantageous", "favorable", "positive"],
+            "bad": ["detrimental", "adverse", "unfavorable", "negative"],
+            "show": ["demonstrate", "illustrate", "reveal", "indicate", "display"],
+            "use": ["utilize", "employ", "implement", "apply"],
+            "get": ["obtain", "acquire", "secure", "attain"],
+            "help": ["assist", "facilitate", "aid", "support"],
+            "make": ["create", "establish", "form", "constitute"],
+            "give": ["provide", "offer", "present", "deliver"],
+            "start": ["commence", "initiate", "begin", "launch"],
+            "end": ["conclude", "terminate", "finalize", "complete"],
+            "think": ["consider", "believe", "regard", "perceive"],
+            "many": ["numerous", "various", "multiple", "several"],
+            "also": ["additionally", "furthermore", "moreover", "likewise"],
+            "because": ["owing to", "due to", "as a result of", "on account of"],
+            "but": ["however", "nevertheless", "yet", "nonetheless"],
+            "so": ["therefore", "consequently", "thus", "hence"],
+            "went": ["proceeded", "traveled", "ventured"],
+            "turned out": ["proved to be", "emerged as"],
+            "packed": ["prepared", "assembled", "gathered"],
+            "perfect": ["ideal", "optimal", "excellent"],
+            "enjoyed": ["experienced", "appreciated", "relished"]
+        }
+    
+    def humanize_text(self, text: str) -> str:
+        """Main humanization pipeline"""
+        sentences = sent_tokenize(text)
+        humanized_sentences = []
+        
+        for i, sentence in enumerate(sentences):
+            # Apply multiple transformation layers
+            sentence = self._expand_contractions(sentence)
+            sentence = self._add_clause_variations(sentence, i)
+            sentence = self._apply_synonym_replacement(sentence)
+            sentence = self._restructure_sentence(sentence, i)
+            sentence = self._add_natural_connectors(sentence, i, len(sentences))
             
-            for break_word in break_words:
-                for j in range(8, word_count - 6):
-                    if words[j].lower().rstrip('.,;') == break_word:
-                        first = ' '.join(words[:j]).rstrip(',;')
-                        if not first.endswith('.'):
-                            first += '.'
-                        
-                        second = ' '.join(words[j:]).lstrip(',; ')
-                        if second and second[0].islower():
-                            second = second[0].upper() + second[1:]
-                        if not second.endswith('.'):
-                            second += '.'
-                        
-                        restructured.append(first)
-                        restructured.append(second)
-                        split_done = True
-                        break
-                if split_done:
+            humanized_sentences.append(sentence)
+        
+        return " ".join(humanized_sentences)
+    
+    def _expand_contractions(self, text: str) -> str:
+        """Expand contractions for formal tone"""
+        contractions = {
+            "don't": "do not", "doesn't": "does not", "didn't": "did not",
+            "can't": "cannot", "couldn't": "could not", "wouldn't": "would not",
+            "shouldn't": "should not", "won't": "will not", "isn't": "is not",
+            "aren't": "are not", "wasn't": "was not", "weren't": "were not",
+            "haven't": "have not", "hasn't": "has not", "hadn't": "had not",
+            "I'm": "I am", "you're": "you are", "we're": "we are",
+            "they're": "they are", "it's": "it is", "that's": "that is"
+        }
+        
+        for contraction, expansion in contractions.items():
+            text = re.sub(r'\b' + contraction + r'\b', expansion, text, flags=re.IGNORECASE)
+        
+        return text
+    
+    def _add_clause_variations(self, sentence: str, position: int) -> str:
+        """Add subordinate clauses and variations"""
+        # Randomly add relative clauses
+        if random.random() < 0.25 and len(sentence.split()) > 10:
+            words = sentence.split()
+            insert_pos = random.randint(len(words)//2, len(words)-2)
+            
+            relative_clauses = [
+                "which",
+                "that",
+                "where"
+            ]
+            
+            if words[insert_pos].endswith(','):
+                words[insert_pos] = words[insert_pos] + " " + random.choice(relative_clauses)
+            
+            sentence = " ".join(words)
+        
+        return sentence
+    
+    def _apply_synonym_replacement(self, sentence: str) -> str:
+        """Replace common words with academic synonyms"""
+        words = word_tokenize(sentence)
+        result = []
+        
+        for word in words:
+            lower_word = word.lower()
+            
+            # Replace with synonym if available and probability check
+            if lower_word in self.synonym_map and random.random() < 0.4:
+                synonym = random.choice(self.synonym_map[lower_word])
+                
+                # Preserve capitalization
+                if word[0].isupper():
+                    synonym = synonym.capitalize()
+                
+                result.append(synonym)
+            else:
+                result.append(word)
+        
+        return " ".join(result)
+    
+    def _restructure_sentence(self, sentence: str, position: int) -> str:
+        """Restructure sentences for natural variation"""
+        # Occasionally convert to passive voice
+        if random.random() < 0.2:
+            for active, passive in self.passive_phrases:
+                if active in sentence.lower():
+                    sentence = re.sub(
+                        r'\b' + active + r'\b',
+                        passive,
+                        sentence,
+                        count=1,
+                        flags=re.IGNORECASE
+                    )
                     break
+        
+        # Add prepositional phrase variations
+        if random.random() < 0.25:
+            prep_phrases = [
+                ("in order to", "to"),
+                ("for the purpose of", "to"),
+                ("with regard to", "regarding"),
+                ("in relation to", "concerning")
+            ]
             
-            if split_done:
-                i += 1
-                continue
+            for verbose, concise in prep_phrases:
+                if random.choice([True, False]):
+                    sentence = sentence.replace(concise, verbose)
         
-        # Occasionally combine short sentences for variety
-        if word_count < 10 and i < len(sentences) - 1 and random.random() < 0.30:
-            next_sent = sentences[i + 1]
-            # Use academic connectors (not casual ones)
-            connectors = [', and', ' as', ' while', ', which']
-            connector = random.choice(connectors)
-            combined = sent.rstrip('.') + connector + ' ' + next_sent[0].lower() + next_sent[1:]
-            restructured.append(combined)
-            i += 2
-            continue
+        return sentence
+    
+    def _add_natural_connectors(self, sentence: str, position: int, total: int) -> str:
+        """Add natural connectors and transitions"""
+        # Add sentence starters occasionally
+        if position > 0 and position < total - 1 and random.random() < 0.3:
+            if not any(sentence.startswith(starter) for starter in self.sentence_starters):
+                starter = random.choice(self.sentence_starters)
+                sentence = f"{starter} {sentence[0].lower()}{sentence[1:]}"
         
-        restructured.append(sent)
-        i += 1
-    
-    return ' '.join(restructured)
-
-
-def academic_vocabulary_variation(text):
-    """
-    Vary vocabulary while maintaining academic formality.
-    Based on human-written patterns (not casual).
-    """
-    # Academic synonym map (maintains formal tone)
-    academic_vocab = {
-        'significant': ['enormous', 'major', 'substantial', 'considerable'],
-        'important': ['pivotal', 'major', 'vital', 'essential'],
-        'various': ['a variety of', 'diverse', 'numerous'],
-        'different': ['diverse', 'various', 'numerous'],
-        'many': ['numerous', 'various', 'multiple'],
-        'growing': ['expanding', 'increasing', 'rising'],
-        'rapid': ['speedy', 'quick', 'fast'],
-        'ensure': ['make sure', 'guarantee', 'secure'],
-        'provide': ['offer', 'give', 'supply'],
-        'include': ['comprise', 'contain', 'encompass'],
-        'show': ['demonstrate', 'indicate', 'reveal'],
-        'use': ['utilize', 'employ', 'apply'],
-        'help': ['assist', 'aid', 'facilitate'],
-        'make': ['create', 'form', 'constitute'],
-        'get': ['obtain', 'acquire', 'secure'],
-        'need': ['require', 'demand', 'necessity'],
-        'give': ['provide', 'offer', 'grant'],
-        'large': ['substantial', 'considerable', 'major'],
-        'small': ['minor', 'limited', 'modest'],
-        'good': ['beneficial', 'advantageous', 'favorable'],
-        'bad': ['adverse', 'unfavorable', 'detrimental'],
-        'main': ['primary', 'principal', 'chief'],
-        'new': ['novel', 'recent', 'contemporary'],
-        'old': ['previous', 'former', 'earlier'],
-    }
-    
-    words = text.split()
-    modified = []
-    
-    for word in words:
-        lower_word = word.lower().strip('.,;:!?')
-        trailing_punct = ''.join([c for c in word if c in '.,;:!?'])
+        # Add mid-sentence transitions
+        if random.random() < 0.2 and ',' in sentence:
+            parts = sentence.split(',', 1)
+            if len(parts) == 2 and random.random() < 0.5:
+                transition = random.choice(self.mid_sentence_transitions)
+                sentence = f"{parts[0]}, {transition} {parts[1].strip()}"
         
-        # 70% replacement for academic variety
-        if lower_word in academic_vocab and random.random() < 0.70:
-            replacement = random.choice(academic_vocab[lower_word])
-            
-            if word and word[0].isupper():
-                replacement = replacement.capitalize()
-            
-            modified.append(replacement + trailing_punct)
-        else:
-            modified.append(word)
-    
-    return ' '.join(modified)
-
-
-def add_natural_academic_transitions(text):
-    """
-    Add natural transitions that maintain academic tone.
-    Not overly casual - based on human-written examples.
-    """
-    sentences = sent_tokenize(text)
-    transitioned = []
-    
-    # Academic but natural transitions
-    academic_transitions = [
-        "What is more, ",
-        "Furthermore, ",
-        "Moreover, ",
-        "In addition, ",
-        "Additionally, ",
-        "Yet, ",
-        "However, ",
-        "Nevertheless, ",
-    ]
-    
-    for i, sent in enumerate(sentences):
-        modified = sent
-        
-        # Add transition to some middle sentences (25% chance)
-        if i > 0 and i < len(sentences) - 1 and random.random() < 0.25:
-            # Don't add if already has transition
-            if not modified.split()[0].rstrip(',') in ['Furthermore', 'Moreover', 'However', 'Yet', 'Additionally']:
-                transition = random.choice(academic_transitions)
-                modified = transition + modified[0].lower() + modified[1:]
-        
-        transitioned.append(modified)
-    
-    return ' '.join(transitioned)
-
-
-def add_natural_imperfections(text):
-    """
-    Add subtle natural imperfections while maintaining academic tone.
-    Based on human-written patterns.
-    """
-    sentences = sent_tokenize(text)
-    imperfect = []
-    
-    for i, sent in enumerate(sentences):
-        modified = sent
-        
-        # Occasionally add relative clauses with natural positioning
-        if len(modified.split()) > 12 and random.random() < 0.20:
-            # Add "which" clauses naturally
-            if ' the ' in modified and ', which ' not in modified:
-                modified = modified.replace(' the ', ' the ', 1)
-                # Could add more complex clause insertion here
-        
-        # Occasionally use "notwithstanding" instead of "despite"
-        if 'despite' in modified.lower() and random.random() < 0.40:
-            modified = re.sub(r'\bdespite\b', 'notwithstanding', modified, flags=re.IGNORECASE)
-        
-        # Use "owing to" instead of "due to" sometimes
-        if 'due to' in modified.lower() and random.random() < 0.40:
-            modified = re.sub(r'\bdue to\b', 'owing to', modified, flags=re.IGNORECASE)
-        
-        imperfect.append(modified)
-    
-    return ' '.join(imperfect)
-
-
-def check_and_correct_grammar(text):
-    """Grammar checking."""
-    if not GRAMMAR_CHECKER_AVAILABLE:
-        return text, []
-    
-    try:
-        tool = language_tool_python.LanguageTool('en-US')
-        matches = tool.check(text)
-        corrected_text = language_tool_python.utils.correct(text, matches)
-        
-        corrections = []
-        for match in matches:
-            if match.replacements:
-                corrections.append({
-                    'original': text[match.offset:match.offset + match.errorLength],
-                    'correction': match.replacements[0] if match.replacements else '',
-                    'message': match.message
-                })
-        
-        tool.close()
-        return corrected_text, corrections
-    except Exception as e:
-        return text, []
-
-
-def apply_perfect_academic_humanization(text, humanizer):
-    """
-    Perfect academic humanization based on actual human-written patterns.
-    Maintains academic formality but adds natural variations.
-    """
-    # STEP 1: Strategic AI phrase replacement (maintain academic tone)
-    text = strategic_ai_phrase_replacement(text)
-    
-    # STEP 2: Apply base transformation with BALANCED parameters
-    transformed = humanizer.humanize_text(
-        text,
-        use_passive=True,
-        use_synonyms=True
-    )
-    
-    # STEP 3: Natural sentence restructuring (keep somewhat long for academic)
-    transformed = natural_sentence_restructuring(transformed)
-    
-    # STEP 4: Academic vocabulary variation (70% replacement, formal)
-    transformed = academic_vocabulary_variation(transformed)
-    
-    # STEP 5: Add natural academic transitions
-    transformed = add_natural_academic_transitions(transformed)
-    
-    # STEP 6: Add natural imperfections (while keeping academic tone)
-    transformed = add_natural_imperfections(transformed)
-    
-    # STEP 7: Fix punctuation
-    transformed = fix_punctuation_spacing(transformed)
-    
-    # STEP 8: Grammar check
-    if GRAMMAR_CHECKER_AVAILABLE:
-        transformed, corrections = check_and_correct_grammar(transformed)
-    else:
-        corrections = []
-    
-    return transformed, corrections
+        return sentence
 
 
 def main():
-    """
-    Perfect Academic Humanizer - Based on actual human-written patterns.
-    Maintains academic formality with natural variations.
-    """
-
-    download_nltk_resources()
-
+    """Streamlit application main function"""
+    
+    # Configure Streamlit page
     st.set_page_config(
         page_title="From AI to Human Written For Soumya ka dost... 😂😁",
         page_icon="😂",
@@ -333,6 +215,7 @@ def main():
         }
     )
 
+    # Custom CSS
     st.markdown(
         """
         <style>
@@ -352,98 +235,67 @@ def main():
         unsafe_allow_html=True
     )
 
+    # Title
     st.markdown("<div class='title'>From AI to Human Written For Soumya ka dost... 😂😁</div>", unsafe_allow_html=True)
     st.markdown(
         """
         <div class='intro'>
-        <p><b>🎓 Perfect Academic Humanizer - Based on Real Human Patterns:</b><br>
-        • Strategic phrase replacement (maintains academic formality)<br>
-        • Natural word order variations (not too casual)<br>
-        • Academic vocabulary diversity (70% replacement, formal tone)<br>
-        • Natural sentence restructuring (keeps academic length)<br>
-        • Subtle imperfections (notwithstanding, owing to, etc.)<br>
-        • Balanced academic transitions (What is more, Yet, etc.)<br>
-        • Target: 80-95% human scores with proper academic tone</p>
+        <p><b>This app transforms your text into a more natural academic style by:</b><br>
+        • Expanding contractions and using formal vocabulary<br>
+        • Adding natural sentence variations and clause structures<br>
+        • Implementing subtle passive voice transformations<br>
+        • Replacing words with contextual synonyms<br>
+        • Creating natural flow with academic connectors</p>
         <hr>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    if GRAMMAR_CHECKER_AVAILABLE:
-        st.success("✓ Grammar checking active")
-    else:
-        st.info("ℹ️ For best results: pip install language-tool-python")
-
+    # Text input
     user_text = st.text_area("Enter your text here:", height=200)
 
+    # File upload
     uploaded_file = st.file_uploader("Or upload a .txt file:", type=["txt"])
     if uploaded_file is not None:
         file_text = uploaded_file.read().decode("utf-8", errors="ignore")
         user_text = file_text
 
-    if st.button("🎓 Perfect Academic Humanization"):
+    # Transform button
+    if st.button("Transform to Academic Style", type="primary"):
         if not user_text.strip():
             st.warning("Please enter or upload some text to transform.")
         else:
-            with st.spinner("Applying perfect academic humanization..."):
-                input_word_count = len(word_tokenize(user_text, language='english', preserve_line=True))
-                doc_input = NLP_GLOBAL(user_text)
-                input_sentence_count = len(list(doc_input.sents))
-
-                # PERFECT ACADEMIC PARAMETERS
-                humanizer = AcademicTextHumanizer(
-                    p_passive=0.30,              # 30% passive (academic standard)
-                    p_synonym_replacement=0.40,   # 40% replacement (balanced)
-                    p_academic_transition=0.35    # 35% transitions (academic but natural)
+            with st.spinner("Transforming text to natural academic style..."):
+                # Input statistics
+                input_words = word_tokenize(user_text)
+                input_sentences = sent_tokenize(user_text)
+                
+                # Transform
+                humanizer = EnhancedAcademicHumanizer()
+                transformed = humanizer.humanize_text(user_text)
+                
+                # Output statistics
+                output_words = word_tokenize(transformed)
+                output_sentences = sent_tokenize(transformed)
+                
+                # Display results
+                st.subheader("Transformed Text:")
+                st.write(transformed)
+                
+                # Statistics
+                st.markdown(
+                    f"**Input**: {len(input_words)} words, {len(input_sentences)} sentences "
+                    f"| **Output**: {len(output_words)} words, {len(output_sentences)} sentences"
                 )
                 
-                transformed, corrections = apply_perfect_academic_humanization(user_text, humanizer)
-
-                st.subheader("🎓 Perfectly Humanized Academic Text:")
-                st.write(transformed)
-
-                output_word_count = len(word_tokenize(transformed, language='english', preserve_line=True))
-                doc_output = NLP_GLOBAL(transformed)
-                output_sentence_count = len(list(doc_output.sents))
-
-                col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    st.metric("Input Words", input_word_count)
-                with col2:
-                    st.metric("Input Sentences", input_sentence_count)
-                with col3:
-                    st.metric("Output Words", output_word_count)
-                with col4:
-                    st.metric("Output Sentences", output_sentence_count)
-
-                if GRAMMAR_CHECKER_AVAILABLE and corrections:
-                    with st.expander(f"✓ {len(corrections)} grammar corrections"):
-                        for i, correction in enumerate(corrections[:10], 1):
-                            st.markdown(f"**{i}.** '{correction['original']}' → '{correction['correction']}'")
-
-                with st.expander("🎓 Perfect Academic Techniques Applied"):
-                    st.markdown("""
-                    **✓ Step 1:** Strategic phrase replacement (e.g., "form a framework" → "constitute a system")  
-                    **✓ Step 2:** Base transformation (30% passive, 40% synonyms, 35% transitions)  
-                    **✓ Step 3:** Natural sentence restructuring (split >22 words, academic length)  
-                    **✓ Step 4:** Academic vocabulary variation (70% replacement, maintains formality)  
-                    **✓ Step 5:** Natural academic transitions (What is more, Yet, etc.)  
-                    **✓ Step 6:** Subtle imperfections (notwithstanding, owing to, natural phrasing)  
-                    **✓ Step 7:** Punctuation fix  
-                    **✓ Step 8:** Grammar correction
-                    
-                    **Expected: 80-95% human score** with proper academic tone (not casual)
-                    """)
-
+                # Download button
                 st.download_button(
-                    label="📥 Download Humanized Text",
+                    label="Download Transformed Text",
                     data=transformed,
-                    file_name="academic_humanized.txt",
+                    file_name="transformed_text.txt",
                     mime="text/plain"
                 )
-
-                st.success("✅ **Perfect Balance:** Maintains academic formality while achieving high human scores!")
 
     st.markdown("---")
     st.caption("Made with and assembled by joy 💫")
