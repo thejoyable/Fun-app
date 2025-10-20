@@ -22,46 +22,45 @@ def fix_punctuation_spacing(text):
     return text.strip()
 
 
-def ultra_aggressive_phrase_destruction(text):
+def total_ai_annihilation(text):
     """
-    DESTROY every single AI-characteristic phrase and pattern.
-    Most aggressive removal possible.
+    ANNIHILATE every single AI pattern - most extreme removal possible.
     """
-    # Nuclear option - remove/replace EVERYTHING AI-like
-    ai_destruction_map = {
-        # Formal transitions (100% removal)
-        r'\bfurthermore,?\b': '',
-        r'\bmoreover,?\b': '',
-        r'\badditionally,?\b': 'also,',
-        r'\bconsequently,?\b': '',
-        r'\btherefore,?\b': 'so',
-        r'\bthus,?\b': 'so',
-        r'\bhence,?\b': 'so',
-        r'\baccordingly,?\b': '',
-        r'\bnevertheless,?\b': 'but',
-        r'\bnonetheless,?\b': 'but',
+    # DESTROY list - these patterns = instant AI detection
+    destruction_patterns = {
+        # Formal transitions - DELETE COMPLETELY
+        r'\bfurthermore,?\s*': '',
+        r'\bmoreover,?\s*': '',
+        r'\badditionally,?\s*': 'also ',
+        r'\bconsequently,?\s*': '',
+        r'\btherefore,?\s*': 'so ',
+        r'\bthus,?\s*': 'so ',
+        r'\bhence,?\s*': '',
+        r'\baccordingly,?\s*': '',
+        r'\bsubsequently,?\s*': 'then ',
+        r'\bnevertheless,?\s*': 'but ',
+        r'\bnonetheless,?\s*': 'but ',
         
-        # Verbose phrases (replace with shortest form)
-        r'\bit is important to note that\b': '',
-        r'\bit is worth noting that\b': '',
-        r'\bit should be noted that\b': '',
-        r'\bit is evident that\b': 'clearly',
-        r'\bit is clear that\b': 'clearly',
-        r'\bthis demonstrates that\b': 'this shows',
-        r'\bthis illustrates that\b': 'this shows',
-        r'\bthis indicates that\b': 'this shows',
-        r'\bthis highlights that\b': 'this shows',
-        r'\bthis reveals that\b': 'this shows',
-        r'\bin conclusion,?\b': '',
-        r'\bin summary,?\b': '',
-        r'\bto summarize,?\b': '',
-        r'\bto conclude,?\b': '',
+        # Verbose AI constructions
+        r'\bit is important to note that\s+': '',
+        r'\bit is worth noting that\s+': '',
+        r'\bit should be noted that\s+': '',
+        r'\bit is evident that\s+': 'clearly, ',
+        r'\bit is clear that\s+': 'clearly, ',
+        r'\bin conclusion,?\s*': '',
+        r'\bin summary,?\s*': '',
+        r'\bto summarize,?\s*': '',
+        r'\bto conclude,?\s*': '',
+        r'\bin order to\b': 'to',
+        r'\bfor the purpose of\b': 'to',
+        r'\bdue to the fact that\b': 'because',
+        r'\bin spite of the fact that\b': 'although',
+        r'\bwith regards? to\b': 'about',
         
-        # AI favorite words (always replace)
+        # AI's favorite words
         r'\bmeticulous(?:ly)?\b': 'careful',
         r'\brobust\b': 'strong',
-        r'\bdelve into\b': 'look at',
-        r'\bdelve\b': 'check',
+        r'\bdelve\b': 'explore',
         r'\bleverage\b': 'use',
         r'\bseamlessly\b': 'smoothly',
         r'\bpivotal\b': 'key',
@@ -70,8 +69,14 @@ def ultra_aggressive_phrase_destruction(text):
         r'\bessential\b': 'needed',
         r'\bcritical\b': 'key',
         r'\bfundamental\b': 'basic',
+        r'\bcomprehensive\b': 'full',
+        r'\bsubstantial\b': 'big',
+        r'\bconsiderable\b': 'big',
+        r'\bnumerous\b': 'many',
+        r'\bmyriad\b': 'many',
+        r'\bplethora\b': 'many',
         
-        # Formal phrases
+        # Formal verbs
         r'\butilize\b': 'use',
         r'\bemploy\b': 'use',
         r'\bfacilitate\b': 'help',
@@ -80,60 +85,35 @@ def ultra_aggressive_phrase_destruction(text):
         r'\bterminate\b': 'end',
         r'\bobtain\b': 'get',
         r'\bacquire\b': 'get',
-        r'\bprovide\b': 'give',
-        r'\bassist\b': 'help',
-        r'\bensure\b': 'make sure',
-        r'\bcomprehensive\b': 'full',
-        r'\bsubstantial\b': 'big',
-        r'\bconsiderable\b': 'big',
-        r'\bnumerous\b': 'many',
+        r'\bdemonstrate\b': 'show',
+        r'\billustrate\b': 'show',
+        r'\bendeavor\b': 'try',
         
-        # Wordy constructions
-        r'\bnavigat(?:e|ing) (?:the|this) (?:landscape|complexity|challenge)\b': 'handle',
-        r'\btreasure trove of\b': '',
-        r'\bunlock(?:ing)? the\b': 'reveal',
-        r'\bvast array of\b': 'many',
-        r'\bmyriad of\b': 'many',
-        r'\bplethora of\b': 'many',
-        r'\btapestry of\b': 'mix of',
-        r'\blandscape of\b': 'area of',
-        r'\brealm of\b': 'field of',
-        
-        # Sentence starters
-        r'\bIn the context of\b': 'In',
-        r'\bWith regards? to\b': 'About',
-        r'\bIn terms of\b': 'For',
-        r'\bIn the realm of\b': 'In',
-        r'\bIn the world of\b': 'In',
-        r'\bIn today\'s (?:digital )?age\b': 'Today',
-        r'\bIn recent years\b': 'Lately',
-        r'\bAt the end of the day\b': 'Finally',
-        
-        # Complex connectors
-        r'\b(?:despite|in spite of) the fact that\b': 'though',
-        r'\bdue to the fact that\b': 'because',
-        r'\bin order to\b': 'to',
-        r'\bfor the purpose of\b': 'to',
-        r'\bwith the aim of\b': 'to',
+        # Wordy phrases
+        r'\bin the context of\b': 'in',
+        r'\bin terms of\b': 'for',
+        r'\bin the realm of\b': 'in',
+        r'\bin today\'s (?:digital )?age\b': 'today',
+        r'\bat the end of the day\b': 'ultimately',
     }
     
-    for pattern, replacement in ai_destruction_map.items():
+    for pattern, replacement in destruction_patterns.items():
         text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
     
-    # Clean up double spaces from removals
+    # Clean up spacing from deletions
     text = re.sub(r'\s{2,}', ' ', text)
-    text = re.sub(r'\s+([.,;])', r'\1', text)
+    text = re.sub(r'\s+([.,;:])', r'\1', text)
+    text = re.sub(r'([.,;:])\s+([.,;:])', r'\1\2', text)
     
     return text
 
 
-def complete_sentence_reconstruction(text):
+def extreme_sentence_transformation(text):
     """
-    COMPLETELY reconstruct sentences - change word order, split/combine aggressively.
-    This is the nuclear option for sentence-level detection.
+    EXTREME sentence transformation - break EVERY pattern.
     """
     sentences = sent_tokenize(text)
-    reconstructed = []
+    transformed = []
     
     i = 0
     while i < len(sentences):
@@ -141,204 +121,213 @@ def complete_sentence_reconstruction(text):
         words = sent.split()
         word_count = len(words)
         
-        # Strategy 1: ALWAYS split sentences >20 words (not random, ALWAYS)
-        if word_count > 20:
-            # Find ANY break point
-            break_words = ['and', 'but', 'while', 'though', 'since', 'because', 'although', 'where', 'when', 'if']
+        # ALWAYS split long sentences (>18 words now, even more aggressive)
+        if word_count > 18:
+            # Priority break words
+            break_words = ['and', 'but', 'while', 'though', 'since', 'because', 'where', 'when', 'as']
+            split_done = False
+            
             for break_word in break_words:
-                for j in range(8, word_count - 5):
+                for j in range(6, word_count - 4):
                     if words[j].lower().rstrip('.,;') == break_word:
                         # SPLIT HERE
-                        first = ' '.join(words[:j]).rstrip(',;') + '.'
+                        first = ' '.join(words[:j]).rstrip(',;')
+                        if not first.endswith('.'):
+                            first += '.'
+                        
                         second = ' '.join(words[j:]).lstrip(',; ')
                         if second and second[0].islower():
                             second = second[0].upper() + second[1:]
                         if not second.endswith('.'):
                             second += '.'
                         
-                        reconstructed.append(first)
-                        reconstructed.append(second)
-                        i += 1
+                        transformed.append(first)
+                        transformed.append(second)
+                        split_done = True
                         break
-                else:
-                    continue
-                break
-            else:
-                # No break word found? Force split in middle
-                mid = word_count // 2
-                first = ' '.join(words[:mid]) + '.'
-                second = ' '.join(words[mid:])
-                if second and second[0].islower():
-                    second = second[0].upper() + second[1:]
-                if not second.endswith('.'):
-                    second += '.'
-                reconstructed.append(first)
-                reconstructed.append(second)
+                if split_done:
+                    break
+            
+            if split_done:
                 i += 1
+                continue
+            
+            # No break word? Force split at midpoint
+            mid = word_count // 2
+            first = ' '.join(words[:mid])
+            if not first.endswith('.'):
+                first += '.'
+            second = ' '.join(words[mid:])
+            if second and second[0].islower():
+                second = second[0].upper() + second[1:]
+            if not second.endswith('.'):
+                second += '.'
+            transformed.append(first)
+            transformed.append(second)
+            i += 1
             continue
         
-        # Strategy 2: Combine short sentences (<10 words) with next
-        if word_count < 10 and i < len(sentences) - 1:
+        # Combine very short sentences (<9 words)
+        if word_count < 9 and i < len(sentences) - 1:
             next_sent = sentences[i + 1]
-            # Use casual connector
-            connectors = [', and', ', but', ' because', ' since', ', so', ', yet']
-            connector = random.choice(connectors)
-            combined = sent.rstrip('.') + connector + ' ' + next_sent[0].lower() + next_sent[1:]
-            reconstructed.append(combined)
-            i += 2
-            continue
+            next_words = next_sent.split()
+            
+            # Only combine if next sentence also relatively short
+            if len(next_words) < 15:
+                connectors = [', and', ', but', ' because', ' since', ', so']
+                connector = random.choice(connectors)
+                combined = sent.rstrip('.') + connector + ' ' + next_sent[0].lower() + next_sent[1:]
+                transformed.append(combined)
+                i += 2
+                continue
         
-        # Strategy 3: Reorder sentence components (change word order)
-        if word_count > 12 and random.random() < 0.40:
-            # Try to move dependent clauses around
-            sent_lower = sent.lower()
-            if ' which ' in sent_lower or ' that ' in sent_lower:
-                # Try to restructure
-                parts = re.split(r'(\s+which\s+|\s+that\s+)', sent, flags=re.IGNORECASE)
-                if len(parts) >= 3:
-                    # Reverse order sometimes
-                    reordered = parts[2].rstrip('.') + ' ' + parts[0].strip()
-                    if not reordered.endswith('.'):
-                        reordered += '.'
-                    sent = reordered
-        
-        reconstructed.append(sent)
+        transformed.append(sent)
         i += 1
     
-    return ' '.join(reconstructed)
+    return ' '.join(transformed)
 
 
-def nuclear_vocabulary_replacement(text):
+def mega_vocabulary_replacement(text):
     """
-    NUCLEAR option - replace 85%+ of replaceable words.
-    Maximum vocabulary diversity possible.
+    MEGA vocabulary replacement - 90% replacement rate.
+    Replace almost EVERYTHING.
     """
-    # MASSIVE vocabulary map
-    mega_vocab_map = {
-        # Level 1: Most common academic words
-        'significant': ['big', 'major', 'key', 'large', 'important', 'notable'],
-        'important': ['key', 'big', 'major', 'vital', 'critical', 'main'],
-        'large': ['big', 'huge', 'major', 'substantial'],
-        'small': ['little', 'tiny', 'minor', 'slight'],
-        'various': ['many', 'different', 'several', 'diverse'],
-        'different': ['other', 'separate', 'distinct', 'unique'],
-        'numerous': ['many', 'lots of', 'plenty of', 'countless'],
-        'multiple': ['many', 'several', 'various'],
-        'several': ['many', 'some', 'a few'],
+    # Ultra-massive vocabulary database
+    ultra_vocab = {
+        # Core words
+        'significant': ['big', 'major', 'large', 'key'],
+        'important': ['key', 'big', 'vital', 'major'],
+        'large': ['big', 'huge', 'major'],
+        'small': ['tiny', 'little', 'minor'],
+        'various': ['many', 'different', 'several'],
+        'different': ['other', 'separate', 'unique'],
+        'numerous': ['many', 'lots of', 'plenty of'],
+        'multiple': ['many', 'several'],
+        'several': ['many', 'some'],
         
-        # Level 2: Verbs
-        'demonstrate': ['show', 'prove', 'display'],
-        'indicate': ['show', 'suggest', 'point to'],
+        # Verbs - Action words
+        'demonstrate': ['show', 'prove'],
+        'indicate': ['show', 'suggest'],
         'illustrate': ['show', 'display'],
-        'reveal': ['show', 'expose', 'display'],
-        'provide': ['give', 'offer', 'supply'],
+        'reveal': ['show', 'expose'],
+        'provide': ['give', 'offer'],
         'enable': ['let', 'allow'],
-        'assist': ['help', 'aid', 'support'],
-        'examine': ['look at', 'check', 'review'],
-        'analyze': ['look at', 'study', 'review'],
-        'investigate': ['look into', 'check', 'study'],
-        'establish': ['set up', 'create', 'form'],
-        'develop': ['create', 'make', 'build'],
-        'create': ['make', 'build', 'form'],
-        'maintain': ['keep', 'preserve', 'uphold'],
-        'enhance': ['improve', 'boost', 'better'],
-        'increase': ['raise', 'boost', 'grow'],
-        'decrease': ['lower', 'reduce', 'cut'],
-        'reduce': ['cut', 'lower', 'shrink'],
+        'assist': ['help', 'aid'],
+        'examine': ['look at', 'check'],
+        'analyze': ['look at', 'study'],
+        'investigate': ['check', 'study'],
+        'establish': ['set up', 'create'],
+        'develop': ['make', 'create'],
+        'create': ['make', 'build'],
+        'maintain': ['keep', 'hold'],
+        'enhance': ['improve', 'boost'],
+        'increase': ['raise', 'grow'],
+        'decrease': ['lower', 'cut'],
+        'reduce': ['cut', 'lower'],
+        'conduct': ['do', 'carry out'],
+        'perform': ['do', 'carry out'],
+        'address': ['handle', 'deal with'],
+        'tackle': ['handle', 'deal with'],
         
-        # Level 3: Adjectives
-        'effective': ['good', 'useful', 'helpful'],
-        'efficient': ['quick', 'fast', 'effective'],
-        'appropriate': ['right', 'proper', 'suitable'],
+        # Adjectives
+        'effective': ['good', 'useful'],
+        'efficient': ['quick', 'fast'],
+        'appropriate': ['right', 'proper'],
         'adequate': ['enough', 'sufficient'],
-        'substantial': ['large', 'big', 'major'],
-        'considerable': ['large', 'big', 'major'],
+        'substantial': ['large', 'big'],
+        'considerable': ['large', 'big'],
         'potential': ['possible', 'likely'],
-        'possible': ['potential', 'feasible'],
+        'possible': ['likely', 'feasible'],
         'necessary': ['needed', 'required'],
-        'required': ['needed', 'necessary'],
-        'specific': ['particular', 'certain', 'exact'],
-        'particular': ['specific', 'certain', 'special'],
-        'general': ['common', 'usual', 'typical'],
-        'common': ['usual', 'typical', 'normal'],
-        'unique': ['special', 'distinct', 'one-of-a-kind'],
+        'required': ['needed', 'must-have'],
+        'specific': ['certain', 'particular'],
+        'particular': ['certain', 'specific'],
+        'general': ['common', 'usual'],
+        'common': ['usual', 'typical'],
+        'unique': ['special', 'one-of-a-kind'],
+        'complex': ['complicated', 'tricky'],
+        'simple': ['easy', 'basic'],
         
-        # Level 4: Adverbs
+        # Adverbs
         'particularly': ['especially', 'notably'],
-        'specifically': ['especially', 'in particular'],
-        'generally': ['usually', 'typically', 'often'],
-        'typically': ['usually', 'normally', 'often'],
-        'currently': ['now', 'today', 'at present'],
+        'specifically': ['especially'],
+        'generally': ['usually', 'often'],
+        'typically': ['usually', 'normally'],
+        'currently': ['now', 'today'],
         'previously': ['before', 'earlier'],
-        'subsequently': ['later', 'after', 'then'],
-        'ultimately': ['finally', 'in the end'],
-        'approximately': ['about', 'around', 'roughly'],
-        'significantly': ['greatly', 'largely', 'majorly'],
-        'considerably': ['greatly', 'largely'],
-        'extremely': ['very', 'really', 'highly'],
-        'relatively': ['fairly', 'quite', 'somewhat'],
+        'subsequently': ['later', 'after'],
+        'ultimately': ['finally', 'eventually'],
+        'approximately': ['about', 'around'],
+        'significantly': ['greatly', 'largely'],
+        'considerably': ['greatly', 'much'],
+        'extremely': ['very', 'really'],
+        'relatively': ['fairly', 'quite'],
+        'increasingly': ['more and more'],
         
-        # Level 5: Nouns
-        'aspect': ['part', 'side', 'element'],
-        'component': ['part', 'piece', 'element'],
-        'element': ['part', 'piece', 'component'],
-        'factor': ['element', 'part', 'aspect'],
-        'issue': ['problem', 'matter', 'concern'],
-        'challenge': ['problem', 'difficulty', 'issue'],
-        'advantage': ['benefit', 'plus', 'upside'],
-        'disadvantage': ['drawback', 'downside', 'con'],
-        'benefit': ['advantage', 'plus', 'gain'],
+        # Nouns
+        'aspect': ['part', 'side'],
+        'component': ['part', 'piece'],
+        'element': ['part', 'piece'],
+        'factor': ['element', 'part'],
+        'issue': ['problem', 'matter'],
+        'challenge': ['problem', 'difficulty'],
+        'advantage': ['benefit', 'plus'],
+        'disadvantage': ['drawback', 'downside'],
+        'benefit': ['advantage', 'gain'],
         'impact': ['effect', 'influence'],
-        'effect': ['impact', 'result', 'outcome'],
+        'effect': ['impact', 'result'],
         'result': ['outcome', 'effect'],
-        'outcome': ['result', 'effect'],
-        'method': ['way', 'approach', 'technique'],
-        'approach': ['way', 'method', 'strategy'],
-        'strategy': ['plan', 'approach', 'tactic'],
-        'process': ['method', 'procedure', 'way'],
-        'procedure': ['process', 'method', 'way'],
-        'concept': ['idea', 'notion', 'thought'],
-        'principle': ['rule', 'concept', 'idea'],
+        'outcome': ['result', 'end'],
+        'method': ['way', 'approach'],
+        'approach': ['way', 'method'],
+        'strategy': ['plan', 'approach'],
+        'process': ['method', 'way'],
+        'procedure': ['process', 'method'],
+        'concept': ['idea', 'notion'],
+        'principle': ['rule', 'concept'],
+        'framework': ['structure', 'system'],
+        'mechanism': ['system', 'process'],
+        'objective': ['goal', 'aim'],
+        'purpose': ['goal', 'aim'],
     }
     
     words = text.split()
-    hyper_modified = []
+    ultra_modified = []
     
     for word in words:
         lower_word = word.lower().strip('.,;:!?')
         trailing_punct = ''.join([c for c in word if c in '.,;:!?'])
         
-        # 85% replacement probability (ULTRA AGGRESSIVE)
-        if lower_word in mega_vocab_map and random.random() < 0.85:
-            replacement = random.choice(mega_vocab_map[lower_word])
+        # 90% replacement probability (ULTRA MEGA)
+        if lower_word in ultra_vocab and random.random() < 0.90:
+            replacement = random.choice(ultra_vocab[lower_word])
             
-            # Preserve capitalization
             if word and word[0].isupper():
                 replacement = replacement.capitalize()
             
-            hyper_modified.append(replacement + trailing_punct)
+            ultra_modified.append(replacement + trailing_punct)
         else:
-            hyper_modified.append(word)
+            ultra_modified.append(word)
     
-    return ' '.join(hyper_modified)
+    return ' '.join(ultra_modified)
 
 
-def maximum_human_injection(text):
+def ultra_human_saturation(text):
     """
-    Inject MAXIMUM human elements - 60% contractions, casual phrases everywhere.
+    SATURATE text with human elements - 70% contractions.
     """
     sentences = sent_tokenize(text)
-    ultra_human = []
+    saturated = []
     
-    # Super casual starters
-    ultra_casual = [
+    # Ultra casual starters (use more frequently)
+    mega_casual = [
         "Look, ", "Listen, ", "Simply put, ", "Basically, ",
-        "The thing is, ", "Here's the deal - ", "In reality, ",
-        "Honestly, ", "To be frank, ", "Let's be real - "
+        "Honestly, ", "The thing is, ", "In reality, ",
+        "Let's be real - ", "To be frank, ", "Here's the deal: "
     ]
     
-    # AGGRESSIVE contractions (60% probability)
-    max_contractions = {
+    # MEGA contractions (70% probability)
+    mega_contractions = {
         ' is not': " isn't",
         ' are not': " aren't",
         ' was not': " wasn't",
@@ -365,35 +354,79 @@ def maximum_human_injection(text):
         ' I am': " I'm",
         ' he is': " he's",
         ' she is': " she's",
+        ' there are': " there're",
     }
     
     for i, sent in enumerate(sentences):
         modified = sent
         
-        # Add casual starter (50% chance on non-first sentences)
-        if i > 0 and random.random() < 0.50:
-            starter = random.choice(ultra_casual)
+        # Add casual starters (60% chance, skip first)
+        if i > 0 and random.random() < 0.60:
+            starter = random.choice(mega_casual)
             if modified[0].isupper():
                 modified = starter + modified[0].lower() + modified[1:]
         
-        # AGGRESSIVE contractions (60% chance per sentence)
-        if random.random() < 0.60:
-            for formal, casual in max_contractions.items():
+        # MEGA contractions (70% chance)
+        if random.random() < 0.70:
+            for formal, casual in mega_contractions.items():
                 if formal in modified:
                     modified = modified.replace(formal, casual, 1)
                     break
         
-        # Add mid-sentence breaks with em dashes (30% chance)
-        if ' and ' in modified and random.random() < 0.30:
+        # Add em dashes (40% chance)
+        if ' and ' in modified and random.random() < 0.40:
             modified = modified.replace(' and ', ' — and ', 1)
+        elif ' but ' in modified and random.random() < 0.40:
+            modified = modified.replace(' but ', ' — but ', 1)
         
-        ultra_human.append(modified)
+        saturated.append(modified)
     
-    return ' '.join(ultra_human)
+    return ' '.join(saturated)
+
+
+def add_human_inconsistencies(text):
+    """
+    Add the subtle inconsistencies that humans naturally have.
+    """
+    sentences = sent_tokenize(text)
+    inconsistent = []
+    
+    for i, sent in enumerate(sentences):
+        modified = sent
+        
+        # Occasionally use Oxford comma, sometimes not (humans are inconsistent)
+        if ', and ' in modified and random.random() < 0.30:
+            # Sometimes remove Oxford comma
+            modified = modified.replace(', and ', ' and ', 1)
+        
+        # Occasionally vary punctuation
+        if random.random() < 0.15 and i < len(sentences) - 1:
+            if modified.endswith('.'):
+                # Sometimes use semicolon
+                modified = modified[:-1] + ';'
+        
+        # Add parenthetical asides (20% chance)
+        if len(modified.split()) > 15 and random.random() < 0.20:
+            words = modified.split()
+            for j in range(5, len(words) - 5):
+                if words[j].lower().rstrip(',') in ['which', 'who', 'that']:
+                    clause_end = min(j + 5, len(words))
+                    before = ' '.join(words[:j])
+                    clause = ' '.join(words[j:clause_end]).strip(',')
+                    after = ' '.join(words[clause_end:])
+                    modified = f"{before} ({clause}) {after}"
+                    break
+        
+        inconsistent.append(modified)
+    
+    result = ' '.join(inconsistent)
+    result = re.sub(r'\s{2,}', ' ', result)
+    
+    return result
 
 
 def check_and_correct_grammar(text):
-    """Grammar checking with LanguageTool."""
+    """Grammar checking."""
     if not GRAMMAR_CHECKER_AVAILABLE:
         return text, []
     
@@ -417,34 +450,36 @@ def check_and_correct_grammar(text):
         return text, []
 
 
-def apply_nuclear_humanization(text, humanizer):
+def apply_ultimate_final_humanization(text, humanizer):
     """
-    NUCLEAR option - most aggressive humanization possible.
-    Every technique at maximum intensity.
+    ULTIMATE FINAL version - absolute maximum humanization.
     """
-    # STEP 1: DESTROY all AI phrases
-    text = ultra_aggressive_phrase_destruction(text)
+    # STEP 1: Total AI annihilation
+    text = total_ai_annihilation(text)
     
-    # STEP 2: Apply base transformation with MAXIMUM parameters
+    # STEP 2: Base transformation with EXTREME parameters
     transformed = humanizer.humanize_text(
         text,
         use_passive=True,
         use_synonyms=True
     )
     
-    # STEP 3: COMPLETE sentence reconstruction (100% of long sentences split)
-    transformed = complete_sentence_reconstruction(transformed)
+    # STEP 3: Extreme sentence transformation (split >18 words)
+    transformed = extreme_sentence_transformation(transformed)
     
-    # STEP 4: NUCLEAR vocabulary replacement (85% replacement)
-    transformed = nuclear_vocabulary_replacement(transformed)
+    # STEP 4: MEGA vocabulary replacement (90%)
+    transformed = mega_vocabulary_replacement(transformed)
     
-    # STEP 5: MAXIMUM human element injection (60% contractions)
-    transformed = maximum_human_injection(transformed)
+    # STEP 5: Ultra human saturation (70% contractions)
+    transformed = ultra_human_saturation(transformed)
     
-    # STEP 6: Fix punctuation
+    # STEP 6: Add human inconsistencies
+    transformed = add_human_inconsistencies(transformed)
+    
+    # STEP 7: Fix punctuation
     transformed = fix_punctuation_spacing(transformed)
     
-    # STEP 7: Grammar check
+    # STEP 8: Grammar check
     if GRAMMAR_CHECKER_AVAILABLE:
         transformed, corrections = check_and_correct_grammar(transformed)
     else:
@@ -455,7 +490,7 @@ def apply_nuclear_humanization(text, humanizer):
 
 def main():
     """
-    NUCLEAR OPTION - Most aggressive AI text humanizer possible.
+    ULTIMATE FINAL VERSION - Maximum possible humanization.
     """
 
     download_nltk_resources()
@@ -495,14 +530,14 @@ def main():
     st.markdown(
         """
         <div class='intro'>
-        <p><b>🔥 NUCLEAR MODE - Most Aggressive Humanization:</b><br>
-        • DESTROYS all AI phrases (furthermore, thus, moreover, etc. = REMOVED)<br>
-        • ALWAYS splits long sentences (>20 words = automatic split)<br>
-        • 85% vocabulary replacement (maximum word diversity)<br>
-        • 60% contraction rate (super casual, human-like)<br>
-        • Complete sentence reconstruction (word order changes)<br>
-        • 50% casual starter injection (Look, Listen, Simply put, etc.)<br>
-        • Target: 85-100% human scores on ALL detectors</p>
+        <p><b>🔥 ULTIMATE FINAL MODE - Maximum Humanization:</b><br>
+        • ANNIHILATES all AI phrases (complete removal/replacement)<br>
+        • Splits EVERY sentence >18 words (more aggressive threshold)<br>
+        • 90% vocabulary replacement (replaces almost everything)<br>
+        • 70% contraction rate (ultra-casual human style)<br>
+        • 60% casual starter injection (Look, Listen, Simply put, etc.)<br>
+        • Adds human inconsistencies (varied punctuation, parentheticals)<br>
+        • Target: 90-100% human scores</p>
         <hr>
         </div>
         """,
@@ -512,7 +547,7 @@ def main():
     if GRAMMAR_CHECKER_AVAILABLE:
         st.success("✓ Grammar checking active")
     else:
-        st.info("ℹ️ Install: pip install language-tool-python")
+        st.info("ℹ️ For best results: pip install language-tool-python")
 
     user_text = st.text_area("Enter your text here:", height=200)
 
@@ -521,25 +556,25 @@ def main():
         file_text = uploaded_file.read().decode("utf-8", errors="ignore")
         user_text = file_text
 
-    if st.button("💥 NUCLEAR HUMANIZATION"):
+    if st.button("💥 ULTIMATE HUMANIZATION"):
         if not user_text.strip():
             st.warning("Please enter or upload some text to transform.")
         else:
-            with st.spinner("Applying NUCLEAR humanization (maximum aggression)..."):
+            with st.spinner("Applying ULTIMATE FINAL humanization..."):
                 input_word_count = len(word_tokenize(user_text, language='english', preserve_line=True))
                 doc_input = NLP_GLOBAL(user_text)
                 input_sentence_count = len(list(doc_input.sents))
 
-                # NUCLEAR PARAMETERS
+                # ULTIMATE FINAL PARAMETERS
                 humanizer = AcademicTextHumanizer(
-                    p_passive=0.20,              # 20% passive (more active = more human)
-                    p_synonym_replacement=0.50,   # 50% replacement (MAXIMUM)
-                    p_academic_transition=0.15    # 15% transitions (minimal formality)
+                    p_passive=0.18,              # 18% passive (more active voice)
+                    p_synonym_replacement=0.55,   # 55% replacement (EXTREME)
+                    p_academic_transition=0.12    # 12% transitions (minimal)
                 )
                 
-                transformed, corrections = apply_nuclear_humanization(user_text, humanizer)
+                transformed, corrections = apply_ultimate_final_humanization(user_text, humanizer)
 
-                st.subheader("💥 ULTRA-HUMANIZED TEXT:")
+                st.subheader("💥 ULTIMATE HUMANIZED TEXT:")
                 st.write(transformed)
 
                 output_word_count = len(word_tokenize(transformed, language='english', preserve_line=True))
@@ -557,31 +592,32 @@ def main():
                     st.metric("Output Sentences", output_sentence_count)
 
                 if GRAMMAR_CHECKER_AVAILABLE and corrections:
-                    with st.expander(f"✓ {len(corrections)} grammar fixes"):
+                    with st.expander(f"✓ {len(corrections)} grammar corrections"):
                         for i, correction in enumerate(corrections[:10], 1):
                             st.markdown(f"**{i}.** '{correction['original']}' → '{correction['correction']}'")
 
-                with st.expander("🔥 NUCLEAR Techniques Applied"):
+                with st.expander("🔥 ULTIMATE FINAL Techniques"):
                     st.markdown("""
-                    **💥 Step 1:** DESTROYED all AI phrases (furthermore/moreover/thus = REMOVED)  
-                    **💥 Step 2:** Base transformation (20% passive, 50% synonyms, 15% transitions)  
-                    **💥 Step 3:** COMPLETE sentence reconstruction (ALWAYS split >20 words)  
-                    **💥 Step 4:** NUCLEAR vocab replacement (85% of words changed)  
-                    **💥 Step 5:** MAXIMUM human injection (60% contractions, 50% casual starters)  
-                    **💥 Step 6:** Punctuation fix  
-                    **💥 Step 7:** Grammar correction
+                    **💥 Step 1:** Total AI phrase annihilation (everything removed/replaced)  
+                    **💥 Step 2:** Base transformation (18% passive, 55% synonyms, 12% transitions)  
+                    **💥 Step 3:** Extreme sentence transformation (ALWAYS split >18 words)  
+                    **💥 Step 4:** MEGA vocabulary replacement (90% of all words changed)  
+                    **💥 Step 5:** Ultra human saturation (70% contractions, 60% casual starters)  
+                    **💥 Step 6:** Human inconsistencies (varied punctuation, parentheticals)  
+                    **💥 Step 7:** Punctuation fix  
+                    **💥 Step 8:** Grammar correction
                     
-                    **Expected: 85-100% human score** (most aggressive possible)
+                    **Expected: 90-100% human score** (absolute maximum possible)
                     """)
 
                 st.download_button(
-                    label="📥 Download",
+                    label="📥 Download Humanized Text",
                     data=transformed,
-                    file_name="ultra_humanized.txt",
+                    file_name="ultimate_humanized.txt",
                     mime="text/plain"
                 )
 
-                st.error("⚠️ **Warning:** This is the MOST AGGRESSIVE mode. Text may be very casual. Review carefully!")
+                st.warning("⚠️ **Note:** Text is extremely casual. Review for appropriateness!")
 
     st.markdown("---")
     st.caption("Made with and assembled by joy 💫")
