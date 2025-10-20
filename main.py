@@ -105,13 +105,7 @@ def main():
         <div class='feature-card'>
         <h3 style='margin-top: 0;'>✨ Advanced Features</h3>
         <ul style='margin-bottom: 0;'>
-            <li><b>Perplexity Variation:</b> Adds natural human-like unpredictability to sentence structure</li>
-            <li><b>Contextual Awareness:</b> Maintains coherent flow and logical transitions</li>
-            <li><b>Sentence Restructuring:</b> Varies sentence length and complexity naturally</li>
-            <li><b>Multiple Output Modes:</b> Choose between balanced, conservative, or aggressive humanization</li>
-            <li><b>Smart Synonym Replacement:</b> Context-aware word substitution for academic tone</li>
-            <li><b>Academic Transition Phrases:</b> Automatically adds scholarly connectors</li>
-            <li><b>Citation-Ready Format:</b> Prepares text for academic citation styles</li>
+            <li><b>Variation:</b> Adds natural human-like unpredictability to sentence structure</li>
         </ul>
         </div>
         """,
