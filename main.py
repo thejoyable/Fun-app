@@ -17,112 +17,132 @@ def download_nltk_resources():
 download_nltk_resources()
 
 
-class UltimateHumanWriter:
+class PerfectHumanWriter:
     """
-    Maximum aggression humanizer with all natural human patterns
+    Perfect human mimicry with intentional grammatical quirks and natural imperfections
     """
     
     def __init__(self):
-        # Ultra-comprehensive synonym map
+        # Comprehensive synonym and transformation map
         self.synonym_map = {
-            # Primary expressions
-            "refers to": ["is the term used to signify", "denotes", "represents", "signifies"],
-            "among nations": ["not only among states but also among", "between countries and"],
-            "encompasses": ["covers", "includes", "spans", "comprises"],
-            "a wide range of": ["a wide variety of", "a broad spectrum of", "numerous"],
-            "including": ["such as", "like", "for example", "including but not limited to"],
+            # Opening phrases
+            "may sound": ["might seem", "may appear", "could sound"],
+            "impossible or imaginary": ["impossible or fanciful", "unbelievable or fictional"],
+            "but it serves as": ["but it is", "yet it represents", "but it functions as"],
+            "a powerful metaphor": ["a strong metaphor", "a potent symbol", "a compelling metaphor"],
+            "for how": ["for showing how", "demonstrating how", "illustrating how"],
+            "even the smallest": ["even the most unappreciated and tiniest", "even the tiniest", "even the most minor"],
+            "when underestimated": ["when overlooked", "if ignored", "when taken for granted"],
+            "can bring down": ["can bringing down", "can topple", "are capable to bring down"],
+            "the mightiest": ["the strongest", "the most powerful", "the greatest"],
             
-            # Temporal expressions
-            "In today's": ["In the present day,", "In the current era,", "In modern times,"],
-            "interconnected world": ["interconnected world", "globally connected environment"],
-            "can have": ["can produce", "can create", "can generate", "may have"],
-            "far-reaching effects": ["consequences in different parts of the world", "widespread impacts"],
-            "making": ["thus,", "therefore,", "consequently,"],
-            "more significant than ever": ["more important than ever", "more crucial than before"],
+            # Context phrases
+            "In life, history, and politics": ["There are innumerable instances in life, history, and politics", "Throughout life, history, and politics"],
+            "there are countless examples": ["where the most insignificant actions or people have been the cause of huge changes"],
+            "where seemingly insignificant": ["where the most insignificant", "in which apparently minor"],
+            "have caused": ["have been the cause of", "have triggered", "have led to"],
+            "major shifts": ["huge changes", "significant transformations", "massive shifts"],
+            "proving that": ["demonstrating that", "showing that", "establishing that"],
+            "are not always": ["are not", "are not necessarily", "may not be"],
+            "the ultimate measure": ["the ultimate criteria to measure", "the final measure", "the definitive measure"],
             
-            # Historical context
-            "is largely shaped by": ["has been largely influenced by", "has been molded by", "is primarily formed by"],
-            "historical events": ["historical occurrences", "past events", "historical developments"],
-            "like": ["such as", "including", "for instance"],
-            "the rise of": ["the establishment of", "the formation of", "the creation of"],
-            "such as": ["like", "including", "for example"],
+            # Elephant imagery
+            "Imagine an enormous elephant": ["Just picture an elephant, the giant of the forest", "Envision a massive elephant", "Picture a huge elephant"],
+            "symbolizing": ["representing", "embodying", "standing for"],
+            "strength, pride, and dominance": ["strength, pride, and the very lord of the forest", "power, dignity, and supremacy"],
+            "marching through": ["walking through", "moving through", "traversing"],
+            "with no fear": ["fearlessly", "without any fear", "with complete confidence"],
+            "Now imagine": ["Now think of", "Then picture", "Consider now"],
+            "a tiny mosquito": ["a mosquito, a tiny struggling insect", "a small mosquito", "a minuscule mosquito"],
+            "fragile, small, and easily ignored": ["very weak but also does not care at all about the elephant", "weak, tiny, and overlooked"],
             
-            # Power dynamics
-            "shifted towards": ["moved towards", "transitioned to", "evolved into"],
-            "led by": ["headed by", "dominated by", "controlled by"],
-            "However": ["Yet", "Nevertheless", "Nonetheless", "Still"],
-            "with the collapse": ["the disintegration", "the fall", "the breakdown"],
-            "emerged": ["arose", "appeared", "came into being"],
-            "with the United States as": ["with the United States as", "marking the United States as"],
-            "the dominant": ["the most powerful", "the leading", "the preeminent"],
-            "Today": ["Currently", "At present", "In the current situation"],
-            "is increasingly": ["is becoming more and more", "is growing more", "is progressively becoming"],
-            "multipolar": ["multipolar", "polycentric"],
-            "playing influential roles": ["being prominent", "playing significant roles", "exerting influence"],
-            "on the global stage": ["on the world stage", "in global affairs", "in international politics"],
+            # Disease and threat
+            "However": ["But", "Yet", "Nevertheless", "Still"],
+            "what the elephant doesn't realize": ["what the elephant doesn't know", "what the elephant fails to understand"],
+            "is that the mosquito": ["is that, albeit tiny, the mosquito", "is that the tiny mosquito"],
+            "though small": ["albeit tiny", "despite being small", "even being tiny"],
+            "carries a deadly disease": ["is loaded with a deadly disease", "harbors a fatal disease"],
+            "like malaria": ["such as malaria", "for instance malaria"],
+            "With just a single bite": ["The mosquito sucks the blood of the elephant for the first time and then", "With only one bite"],
+            "begins a process": ["that very moment in the later stage of the elephant's life a slow process of decline starts", "initiates a process"],
+            "that ultimately leads to": ["that eventually causes", "which finally results in"],
+            "the elephant's downfall": ["the elephant's demise", "the fall of the elephant"],
+            "physical power means nothing": ["brute force is outdone by", "physical strength counts for nothing"],
+            "against the silent, invisible threat": ["by the stealthy and imperceptible creature", "against the hidden, unseen danger"],
+            "it ignored": ["that it took for granted", "it overlooked", "it dismissed"],
             
-            # Contemporary issues
-            "Key issues": ["Main concerns", "Primary matters", "Central topics"],
-            "today include": ["currently are", "at present encompass"],
-            "the balance of power": ["Balancing power", "Power equilibrium", "The power balance"],
-            "Conflicts in regions": ["The situation in", "Tensions in areas", "Disputes in regions"],
-            "such as": ["like", "including", "for example"],
-            "highlight": ["signify", "demonstrate", "illustrate", "point to"],
-            "the ongoing challenges": ["the difficulty", "the continuous struggles", "the persistent problems"],
-            "achieving": ["attaining", "reaching", "obtaining"],
-            "At the same time": ["Nevertheless", "Simultaneously", "Concurrently"],
-            "cooperation through": ["leaders managing to meet at", "collaboration via"],
-            "summits like": ["meetings such as", "conferences including"],
-            "agreements like": ["accords such as", "treaties like"],
-            "show efforts toward": ["can be seen as pointing toward", "demonstrate attempts at", "indicate moves toward"],
-            "solving common problems": ["tackle global issues", "address shared challenges", "resolve mutual concerns"],
+            # Reflection
+            "This story is not just about nature": ["This tale is not only of the wild", "This narrative is not merely about nature"],
+            "it reflects our own world": ["it is a mirror to our world", "it mirrors our reality"],
             
-            # Non-state actors
-            "is also influenced by": ["is also impacted by", "is additionally affected by"],
-            "non-state actors": ["non-state entities", "non-governmental actors"],
-            "multinational corporations": ["transnational companies", "global corporations", "international firms"],
-            "NGOs": ["non-governmental organizations (NGOs)", "civil society organizations"],
-            "which play a role": ["These entities have a hand", "that contribute to", "which participate"],
-            "in shaping": ["in molding", "in forming", "in influencing"],
-            "opinions and policies": ["public perception and government policy", "viewpoints and regulations"],
-            "Moreover": ["To add to this", "Furthermore", "In addition", "Additionally"],
-            "globalization and digital communication": ["globalization and digital technology", "global connectivity and technology"],
-            "have made": ["have rendered", "have caused", "have transformed"],
-            "political developments": ["countries and people", "political events", "policy changes"],
-            "more visible and impactful": ["more interconnected than ever", "more transparent and influential"],
-            "worldwide": ["globally", "across the world", "internationally"],
+            # Historical examples
+            "Throughout history": ["We have witnessed throughout the ages", "Across history", "Through the ages"],
+            "we have seen": ["there have been", "we have witnessed", "history shows"],
+            "great empires fall": ["the demise of mighty kingdoms", "powerful empires collapse"],
+            "not because of": ["but not always due to", "not due to", "not owing to"],
+            "massive wars": ["great wars", "huge conflicts", "large-scale battles"],
+            "but because of": ["often it was just", "but rather due to", "but from"],
+            "internal decay": ["slow internal decay", "internal corruption", "domestic deterioration"],
+            "small rebellions": ["little revolts", "minor uprisings", "petty rebellions"],
+            "or ignored warnings": ["or warnings long since ignored", "or overlooked cautions"],
             
-            # Conclusion patterns
-            "In conclusion": ["To conclude", "In summary", "Ultimately"],
-            "is a dynamic and complex field": ["represents a multifaceted domain", "is an intricate and evolving area"],
-            "that affects": ["that impacts", "that influences", "with effects on"],
-            "every individual": ["all people", "each person", "everyone"],
-            "Understanding it": ["Comprehending this field", "Grasping these dynamics"],
-            "is essential for": ["is crucial to", "is vital for", "is necessary for"],
-            "promoting": ["fostering", "advancing", "encouraging"],
-            "in a rapidly changing": ["in an evolving", "in a dynamic", "in a constantly shifting"],
-            "global environment": ["international landscape", "world context"]
+            # Examples of change
+            "A student's voice sparked": ["The voice of a student started", "A student's voice ignited"],
+            "revolutions": ["the revolutions", "revolutionary movements"],
+            "a whistleblower changed": ["the act of a whistleblower turned", "a whistleblower altered"],
+            "the course of justice": ["the wheel of justice", "the path of justice"],
+            "one vote has shifted": ["a single vote determined the victor in", "one vote changed"],
+            "political powers": ["a power struggle", "political dynamics"],
+            "These are all examples": ["All these instances are", "These all represent examples"],
+            "bringing down": ["defeating", "toppling", "taking down"],
+            
+            # Lesson and modern application
+            "This metaphor also teaches us": ["This image also conveys the message that we should be", "This metaphor also shows us"],
+            "humility and awareness": ["modest and very observant", "humbleness and vigilance"],
+            "It reminds us that": ["It tells us that", "It shows us that"],
+            "power must be balanced with wisdom": ["the wise and the powerful must come together", "power requires wisdom"],
+            "and those who": ["and that those who", "and individuals who"],
+            "seem small or powerless": ["appear small or weak", "look insignificant or helpless"],
+            "should never be dismissed": ["should never be disregarded", "must not be ignored"],
+            "In the age of": ["In the internet age", "In the era of", "In this age of"],
+            "social media": ["the internet", "digital media"],
+            "a single post": ["a single tweet", "one post", "a lone message"],
+            "can tarnish": ["can cause a", "can damage", "can ruin"],
+            "reputations": ["reputation downfall", "one's reputation"],
+            "a minor bug": ["a small bug", "a tiny glitch"],
+            "can crash": ["can take down", "can destroy", "can break"],
+            "a powerful system": ["a supercomputer", "a major system"],
+            "a lone individual": ["a single person", "one person alone"],
+            "can lead": ["can start", "can initiate", "can begin"],
+            "a movement": ["a revolution", "a social movement"],
+            
+            # Conclusion
+            "In conclusion": ["To wrap it up", "To sum up", "In summary", "Finally"],
+            "reminds us that": ["is a reminder that", "tells us that"],
+            "no one is too small": ["nobody is too insignificant", "no person is too tiny"],
+            "to make a difference": ["to create change", "to have an impact"],
+            "and no one is too big": ["and nobody is too powerful", "and no one is too mighty"],
+            "to fall": ["to collapse", "to be brought down"],
+            "Strength lies": ["True strength exists", "Real power lies"],
+            "not just in size": ["not only in size", "not merely in magnitude"],
+            "but in": ["but also in", "but rather in"],
+            "strategy, awareness, and resilience": ["wisdom, vigilance, and adaptability"]
         }
         
-        # Complex transformation patterns
-        self.transformation_rules = [
-            # Passive constructions
-            (r"refers to the study", "is the term used to signify the study"),
-            (r"among nations, international", "not only among states but also among international"),
+        # Grammatical quirk patterns (intentional errors)
+        self.quirk_patterns = [
+            # Wrong verb forms
+            (r"can bring down", "can bringing down"),
+            (r"are capable of bringing", "are capable to bring"),
             
-            # Complex clauses
-            (r"the actions of one country can have far-reaching effects, making", 
-             "the actions of one country can produce consequences in different parts of the world; thus,"),
+            # Awkward constructions
+            (r"a tiny mosquito—fragile", "a mosquito, a tiny struggling insect that is very weak but also does not care"),
             
-            # Awkward but natural constructions
-            (r"with the collapse of the Soviet Union in 1991, a unipolar moment emerged",
-             "the disintegration of the Soviet Union in 1991 marked the beginning of a unipolar moment"),
-             
-            # Add "not only... but also"
-            (r"among nations", "not only among nations but also among"),
+            # Verbose redundancy
+            (r"enormous elephant, symbolizing strength", "elephant, the giant of the forest, representing strength, pride, and the very lord of the forest"),
             
-            # Change "show" to passive
-            (r"show efforts toward solving", "can be seen as pointing toward a common will to tackle"),
+            # Awkward temporal phrases
+            (r"With just a single bite, the mosquito begins", "The mosquito sucks the blood of the elephant for the first time and then that very moment in the later stage"),
         ]
     
     def _fix_punctuation_spacing(self, text: str) -> str:
@@ -136,28 +156,25 @@ class UltimateHumanWriter:
         return text.strip()
     
     def humanize_text(self, text: str) -> str:
-        """ULTIMATE humanization with maximum natural patterns"""
-        
-        # Apply transformation rules first
-        for pattern, replacement in self.transformation_rules:
-            text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+        """Perfect human mimicry with natural imperfections"""
         
         sentences = sent_tokenize(text)
         humanized_sentences = []
         
         for i, sentence in enumerate(sentences):
-            # Multiple passes for maximum coverage
+            # Multiple aggressive passes
             sentence = self._expand_contractions(sentence)
             
-            # 4 rounds of aggressive synonym replacement
-            for round_num in range(4):
-                sentence = self._ultra_aggressive_synonyms(sentence, round_num)
+            # 5 rounds of ultra-aggressive replacement
+            for round_num in range(5):
+                sentence = self._mega_aggressive_synonyms(sentence)
             
-            sentence = self._add_complex_constructions(sentence)
-            sentence = self._add_formal_language(sentence)
-            sentence = self._create_subordinate_clauses(sentence, i)
-            sentence = self._add_passive_voice(sentence)
-            sentence = self._add_human_transitions(sentence, i, len(sentences))
+            sentence = self._add_grammatical_quirks(sentence)
+            sentence = self._add_verbose_descriptions(sentence)
+            sentence = self._add_awkward_constructions(sentence)
+            sentence = self._create_complex_sentences(sentence, i)
+            sentence = self._add_natural_transitions(sentence, i, len(sentences))
+            sentence = self._add_mixed_patterns(sentence)
             
             humanized_sentences.append(sentence)
         
@@ -183,25 +200,23 @@ class UltimateHumanWriter:
         
         return text
     
-    def _ultra_aggressive_synonyms(self, sentence: str, round_num: int) -> str:
-        """ULTRA AGGRESSIVE - 95% replacement rate across 4 rounds"""
+    def _mega_aggressive_synonyms(self, sentence: str) -> str:
+        """MEGA AGGRESSIVE - 98% replacement across 5 rounds"""
         
-        # Sort by phrase length (longest first)
-        sorted_synonyms = sorted(
+        # Sort by phrase length
+        sorted_syns = sorted(
             self.synonym_map.items(),
             key=lambda x: len(x[0].split()),
             reverse=True
         )
         
-        for original, replacements in sorted_synonyms:
-            # Skip if already replaced in earlier round
+        for original, replacements in sorted_syns:
             if original.lower() in sentence.lower():
-                # 95% replacement probability
-                if random.random() < 0.95:
-                    replacement = random.choice(replacements)
+                # 98% replacement rate!
+                if random.random() < 0.98:
+                    replacement = random.choice(replacements) if isinstance(replacements, list) else replacements
                     
-                    # Preserve capitalization
-                    def replace_with_case(match):
+                    def preserve_case(match):
                         matched = match.group(0)
                         if matched[0].isupper():
                             return replacement[0].upper() + replacement[1:]
@@ -209,7 +224,7 @@ class UltimateHumanWriter:
                     
                     sentence = re.sub(
                         r'\b' + re.escape(original) + r'\b',
-                        replace_with_case,
+                        preserve_case,
                         sentence,
                         count=1,
                         flags=re.IGNORECASE
@@ -217,46 +232,39 @@ class UltimateHumanWriter:
         
         return sentence
     
-    def _add_complex_constructions(self, sentence: str) -> str:
-        """Add 'not only... but also' and other complex patterns"""
+    def _add_grammatical_quirks(self, sentence: str) -> str:
+        """Add intentional grammatical quirks (30% chance)"""
         
-        # Add "not only... but also"
-        sentence = re.sub(
-            r'among nations, international',
-            'not only among states but also among international',
-            sentence,
-            flags=re.IGNORECASE
-        )
-        
-        # Add "including but not limited to"
-        if "including" in sentence.lower() and random.random() < 0.4:
-            sentence = re.sub(
-                r'\bincluding\b',
-                'including but not limited to',
-                sentence,
-                count=1,
-                flags=re.IGNORECASE
-            )
+        if random.random() < 0.3:
+            quirks = [
+                (r"can bring down", "can bringing down"),
+                (r"are able to", "are capable to"),
+                (r"have been", "have been the"),
+                (r"is that", "is that,"),
+            ]
+            
+            for pattern, quirk in quirks:
+                if pattern in sentence.lower():
+                    sentence = re.sub(pattern, quirk, sentence, count=1, flags=re.IGNORECASE)
+                    break
         
         return sentence
     
-    def _add_formal_language(self, sentence: str) -> str:
-        """Add formal, academic-style language"""
+    def _add_verbose_descriptions(self, sentence: str) -> str:
+        """Add verbose, redundant descriptions"""
         
-        formal_patterns = {
-            "is": ["represents", "constitutes", "denotes"],
-            "refers to": ["is the term used to signify", "denotes"],
-            "have made": ["have rendered", "have caused"],
-            "play a role": ["have a hand", "contribute to"],
-            "show": ["can be seen as", "demonstrate", "indicate"]
+        verbose_map = {
+            "an enormous elephant": "an elephant, the giant of the forest",
+            "symbolizing strength": "representing strength, pride, and the very lord of the forest",
+            "a tiny mosquito": "a mosquito, a tiny struggling insect",
+            "fragile, small": "very weak but also does not care at all",
         }
         
-        for original, replacements in formal_patterns.items():
-            if original in sentence.lower() and random.random() < 0.6:
-                replacement = random.choice(replacements)
+        for short, verbose in verbose_map.items():
+            if short in sentence.lower() and random.random() < 0.5:
                 sentence = re.sub(
-                    r'\b' + re.escape(original) + r'\b',
-                    replacement,
+                    re.escape(short),
+                    verbose,
                     sentence,
                     count=1,
                     flags=re.IGNORECASE
@@ -264,20 +272,48 @@ class UltimateHumanWriter:
         
         return sentence
     
-    def _create_subordinate_clauses(self, sentence: str, position: int) -> str:
-        """Create complex subordinate clauses and run-ons"""
+    def _add_awkward_constructions(self, sentence: str) -> str:
+        """Add slightly awkward but natural constructions"""
         
-        # High probability of complex sentences (60%)
-        if random.random() < 0.6 and len(sentence.split()) > 12:
-            # Replace periods with semicolons or commas + thus/therefore
+        # "albeit tiny" construction
+        sentence = re.sub(
+            r"though small",
+            "albeit tiny",
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # "loaded with" instead of "carries"
+        sentence = re.sub(
+            r"carries a deadly",
+            "is loaded with a deadly",
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # Complex temporal phrases
+        sentence = re.sub(
+            r"With just a single bite, the mosquito begins a process",
+            "The mosquito sucks the blood for the first time and then that very moment a slow process starts",
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        return sentence
+    
+    def _create_complex_sentences(self, sentence: str, position: int) -> str:
+        """Create complex run-on sentences"""
+        
+        # 65% probability of complex sentences
+        if random.random() < 0.65 and len(sentence.split()) > 12:
             parts = sentence.split('. ')
             if len(parts) >= 2:
                 connectors = [
-                    "; thus,",
-                    "; therefore,",
-                    ", and thus",
+                    ", but not always due to",
+                    ", often it was just",
+                    "; it is a",
                     ", which",
-                    ", and this"
+                    ", and then"
                 ]
                 connector = random.choice(connectors)
                 sentence = f"{parts[0]}{connector} {parts[1][0].lower()}{parts[1][1:]}"
@@ -286,63 +322,65 @@ class UltimateHumanWriter:
         
         return sentence
     
-    def _add_passive_voice(self, sentence: str) -> str:
-        """Add passive voice constructions"""
-        
-        passive_transforms = [
-            (r"is largely shaped by", "has been largely influenced by"),
-            (r"shifted towards", "moved towards"),
-            (r"led by", "headed by"),
-            (r"emerged", "marked the beginning of"),
-            (r"show efforts", "can be seen as pointing"),
-            (r"play a role", "have a hand"),
-            (r"which play", "These entities have")
-        ]
-        
-        for pattern, replacement in passive_transforms:
-            if random.random() < 0.7:
-                sentence = re.sub(
-                    pattern,
-                    replacement,
-                    sentence,
-                    count=1,
-                    flags=re.IGNORECASE
-                )
-        
-        return sentence
-    
-    def _add_human_transitions(self, sentence: str, position: int, total: int) -> str:
-        """Add varied human-like transitions"""
+    def _add_natural_transitions(self, sentence: str, position: int, total: int) -> str:
+        """Add natural human transitions"""
         
         transitions = [
             "Moreover,",
             "To add to this,",
             "Furthermore,",
             "In addition,",
-            "Additionally,",
-            "Notably,",
-            "Significantly,",
+            "What is more,",
             "Besides this,",
-            "What is more,"
+            "Additionally,"
         ]
         
-        # 50% chance to add transition
-        if position > 0 and position < total - 1 and random.random() < 0.5:
-            has_transition = any(sentence.startswith(t) for t in transitions)
-            if not has_transition and not sentence.startswith(("The", "One", "A", "Key", "Main")):
-                starter = random.choice(transitions)
-                sentence = f"{starter} {sentence[0].lower()}{sentence[1:]}"
+        # 55% chance
+        if position > 0 and position < total - 1 and random.random() < 0.55:
+            if not any(sentence.startswith(t) for t in transitions):
+                if not sentence.startswith(("The", "One", "A", "This", "These", "Just", "Now")):
+                    starter = random.choice(transitions)
+                    sentence = f"{starter} {sentence[0].lower()}{sentence[1:]}"
         
         # Replace standard transitions
-        replacements = {
-            "However,": ["Yet,", "Nevertheless,", "Nonetheless,", "Still,"],
-            "Moreover,": ["To add to this,", "Furthermore,", "In addition,"],
-            "At the same time,": ["Nevertheless,", "Simultaneously,"]
+        transition_replacements = {
+            "However,": ["But,", "Yet,", "Nevertheless,", "Still,"],
+            "In conclusion,": ["To wrap it up,", "To sum up,", "Finally,"],
+            "Moreover,": ["To add to this,", "Furthermore,"],
         }
         
-        for original, options in replacements.items():
-            if sentence.startswith(original):
-                sentence = sentence.replace(original, random.choice(options), 1)
+        for orig, replacements in transition_replacements.items():
+            if sentence.startswith(orig):
+                sentence = sentence.replace(orig, random.choice(replacements), 1)
+        
+        return sentence
+    
+    def _add_mixed_patterns(self, sentence: str) -> str:
+        """Add mixed constructions and patterns"""
+        
+        # "not always due to... often it was"
+        sentence = re.sub(
+            r"not because of ([^,]+), but because of",
+            r"but not always due to \1, often it was just",
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # "the act of" constructions
+        sentence = re.sub(
+            r"a whistleblower changed",
+            "the act of a whistleblower turned",
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # "determined the victor"
+        sentence = re.sub(
+            r"one vote has shifted political powers",
+            "a single vote determined the victor in a power struggle",
+            sentence,
+            flags=re.IGNORECASE
+        )
         
         return sentence
 
@@ -420,7 +458,7 @@ def main():
                 input_sentences = sent_tokenize(user_text)
                 
                 # Transform
-                humanizer = UltimateHumanWriter()
+                humanizer = PerfectHumanWriter()
                 transformed = humanizer.humanize_text(user_text)
                 
                 # Output statistics
