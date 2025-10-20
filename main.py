@@ -3,28 +3,31 @@ from transformer.app import AcademicTextHumanizer, NLP_GLOBAL, download_nltk_res
 from nltk.tokenize import word_tokenize
 
 
-
 def main():
     """
     The `main` function sets up a Streamlit page for transforming user-provided text into a more formal
     academic style by expanding contractions, adding academic transitions, and optionally converting
     sentences to passive voice or replacing words with synonyms.
     """
+
     # Download NLTK resources if needed
     download_nltk_resources()
 
     # Configure Streamlit page
     st.set_page_config(
-        page_title="From AI to Human Written For Soumya ka dost... 😂😁 ",
+        page_title="From AI to Human Written For Soumya ka dost... 😂😁",
         page_icon="😂",
         layout="wide",
         initial_sidebar_state="expanded",
-        
         menu_items={
-
+            "Get help": "https://docs.streamlit.io/",
+            "Report a bug": "https://github.com/streamlit/streamlit/issues",
+            "About": "Made with and assembled by joy 💫"
         }
     )
-st.caption("Made with and assembled by joy 💫")
+
+    # Caption / footer line (inside main function)
+    st.caption("Made with and assembled by joy 💫")
 
     # --- Custom CSS for Title Centering and Additional Styling ---
     st.markdown(
@@ -49,11 +52,11 @@ st.caption("Made with and assembled by joy 💫")
     )
 
     # --- Title / Intro ---
-    st.markdown("<div class='title'>🧔🏻‍♂️Humanize AI🤖 Generated text</div>", unsafe_allow_html=True)
+    st.markdown("<div class='title'>From AI to Human Written For Soumya ka dost... 😂😁</div>", unsafe_allow_html=True)
     st.markdown(
         """
         <div class='intro'>
-        <p><b>This app transforms your text into a more formal academic style by:<b><br>
+        <p><b>This app transforms your text into a more formal academic style by:</b><br>
         • Expanding contractions<br>
         • Adding academic transitions<br>
         • <em>Optionally</em> converting some sentences to passive voice<br>
@@ -84,7 +87,7 @@ st.caption("Made with and assembled by joy 💫")
         else:
             with st.spinner("Transforming text..."):
                 # Input stats
-                input_word_count = len(word_tokenize(user_text,language='english', preserve_line=True))
+                input_word_count = len(word_tokenize(user_text, language='english', preserve_line=True))
                 doc_input = NLP_GLOBAL(user_text)
                 input_sentence_count = len(list(doc_input.sents))
 
@@ -105,7 +108,7 @@ st.caption("Made with and assembled by joy 💫")
                 st.write(transformed)
 
                 # Output stats
-                output_word_count = len(word_tokenize(transformed,language='english', preserve_line=True))
+                output_word_count = len(word_tokenize(transformed, language='english', preserve_line=True))
                 doc_output = NLP_GLOBAL(transformed)
                 output_sentence_count = len(list(doc_output.sents))
 
