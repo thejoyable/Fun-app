@@ -3,90 +3,64 @@ import random
 import re
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
-from collections import defaultdict
+import time
 
+# Download NLTK resources
 def download_nltk_resources():
-    resources = ['punkt', 'averaged_perceptron_tagger', 'wordnet', 'omw-1.4', 'stopwords']
+    resources = ['punkt', 'punkt_tab', 'averaged_perceptron_tagger', 'wordnet', 'omw-1.4', 'stopwords']
     for resource in resources:
         try:
             nltk.data.find(f'tokenizers/{resource}')
         except LookupError:
-            nltk.download(resource, quiet=True)
+            try:
+                nltk.download(resource, quiet=True)
+            except:
+                pass
 
 download_nltk_resources()
 
 
-class HumanizeAIPro:
+class AdvancedHumanizer:
     """
-    Professional AI Humanizer using proven humanizeai.io techniques:
-    - Natural Language Processing (NLP)
-    - Sentiment Analysis
-    - Personalization
-    - Feedback Loops
-    - Context Preservation
+    Advanced AI Humanizer with multiple techniques
     """
     
     def __init__(self):
-        # Comprehensive transformation database
         self.transformations = {
-            # Action verbs - make more conversational
-            "refers to": ["talks about", "is about", "means", "relates to", "points to"],
-            "holds": ["has", "carries", "possesses", "bears"],
-            "includes": ["covers", "involves", "contains", "encompasses"],
-            "ensures": ["makes sure", "guarantees", "sees to it that"],
-            "reveals": ["shows", "uncovers", "demonstrates", "brings to light"],
-            "indicates": ["shows", "points out", "suggests", "hints at"],
-            "demonstrates": ["shows", "proves", "illustrates", "displays"],
-            "encompasses": ["includes", "covers", "involves", "takes in"],
-            "comprises": ["includes", "consists of", "is made up of"],
+            # Core transformations
+            "refers to": ["talks about", "is about", "means", "points to", "signifies"],
+            "holds": ["has", "carries", "possesses"],
+            "includes": ["covers", "involves", "contains"],
+            "ensures": ["makes sure", "guarantees", "sees to it"],
+            "reveals": ["shows", "uncovers", "demonstrates"],
+            "encompasses": ["includes", "covers", "takes in"],
             
-            # Descriptive adjectives - natural variations
-            "basic": ["fundamental", "core", "primary", "main"],
-            "strong": ["powerful", "solid", "robust", "firm"],
-            "various": ["different", "several", "numerous", "multiple"],
-            "current": ["present", "existing", "ongoing", "today's"],
-            "concerning": ["worrying", "troubling", "alarming", "disturbing"],
-            "common": ["usual", "typical", "frequent", "regular"],
-            "poor": ["bad", "inadequate", "substandard", "unsatisfactory"],
-            "inconsistent": ["irregular", "erratic", "unpredictable", "variable"],
+            # Descriptive words
+            "basic": ["fundamental", "core", "primary"],
+            "strong": ["powerful", "solid", "robust"],
+            "various": ["different", "several", "multiple"],
+            "current": ["present", "existing", "today's"],
+            "concerning": ["worrying", "troubling", "alarming"],
+            "common": ["usual", "typical", "frequent"],
+            "poor": ["bad", "inadequate", "substandard"],
             
-            # Connector phrases - natural flow
-            "Besides": ["Moreover", "What's more", "On top of that", "Additionally", "Also"],
-            "Additionally": ["Moreover", "Furthermore", "On top of this", "What's more", "Also"],
-            "Furthermore": ["Moreover", "Besides", "What's more", "In addition", "Also"],
-            "However": ["But", "Yet", "Still", "Though", "That said"],
-            "Therefore": ["So", "Thus", "Hence", "As a result", "Because of this"],
+            # Connectors
+            "Besides": ["Moreover", "What's more", "Also", "Plus"],
+            "Additionally": ["Moreover", "Also", "What's more"],
+            "Furthermore": ["Moreover", "Also", "Plus"],
+            "However": ["But", "Yet", "Still", "Though"],
+            "Therefore": ["So", "Thus", "As a result"],
             
-            # Complex phrases - simplify and vary
-            "particularly in": ["especially in", "mainly in", "specifically in", "most of all in"],
-            "across many": ["in many", "throughout", "in numerous", "all over"],
-            "often poor": ["usually bad", "frequently inadequate", "commonly substandard"],
-            "despite various": ["even with many", "in spite of several", "regardless of various"],
-            "remains inconsistent": ["stays irregular", "continues to vary", "is still unpredictable"],
+            # Complex phrases
+            "particularly in": ["especially in", "mainly in", "most of all in"],
+            "across many": ["in many", "throughout", "all over"],
+            "despite various": ["even with many", "in spite of several"],
             
-            # Prepositional phrases
-            "toward society": ["to society", "towards the community", "for society"],
-            "of public property": ["of community property", "of shared resources"],
-            "in India": ["within India", "across India", "in this country"],
-            "among many citizens": ["for many people", "with numerous citizens", "for a lot of people"],
-            
-            # Full sentence patterns
-            "The current state of": ["How things stand with", "The present situation of", "The way things are with"],
-            "a concerning gap between": ["a worrying divide between", "a troubling gap between", "an alarming disconnect between"],
-            "not only affects": ["doesn't just impact", "not just influences", "doesn't only affect"],
-            "but also contributes to": ["but also leads to", "but additionally causes", "but also results in"],
+            # Full patterns
+            "The current state of": ["How things stand with", "The present situation of"],
+            "not only affects": ["doesn't just impact", "not just influences"],
+            "but also contributes to": ["but also leads to", "but also results in"],
         }
-        
-        # Sentence starters for variety
-        self.sentence_starters = [
-            "Basically,", "Essentially,", "In fact,", "Actually,", "To be honest,",
-            "Realistically,", "Truthfully,", "Interestingly,", "Notably,"
-        ]
-        
-        # Casual connectors
-        self.casual_connectors = [
-            "and", "but", "so", "yet", "plus", "also"
-        ]
     
     def _fix_punctuation(self, text: str) -> str:
         """Fix spacing around punctuation"""
@@ -96,16 +70,16 @@ class HumanizeAIPro:
         text = re.sub(r'\s+', ' ', text)
         return text.strip()
     
-    def humanize_text(self, text: str, mode: str = "Enhanced") -> str:
-        """
-        Main humanization with multiple passes
-        Modes: Basic (3 passes), Aggressive (6 passes), Enhanced (9 passes)
-        """
+    def humanize_text(self, text: str, mode: str = "Enhanced", techniques: list = None) -> str:
+        """Main humanization function"""
+        
+        if techniques is None:
+            techniques = []
         
         passes = {"Basic": 3, "Aggressive": 6, "Enhanced": 9}
         num_passes = passes.get(mode, 9)
         
-        # Expand contractions first
+        # Expand contractions
         text = self._expand_contractions(text)
         
         sentences = sent_tokenize(text)
@@ -116,31 +90,31 @@ class HumanizeAIPro:
             for pass_num in range(num_passes):
                 sentence = self._apply_transformations(sentence, pass_num)
             
-            # Apply humanization techniques
+            # Apply techniques
             sentence = self._add_natural_flow(sentence)
-            sentence = self._vary_sentence_structure(sentence, i)
-            sentence = self._add_conversational_elements(sentence, i)
-            sentence = self._personalize_content(sentence)
+            sentence = self._vary_structure(sentence, i)
+            sentence = self._add_conversational(sentence, i)
             
             humanized_sentences.append(sentence)
         
         result = " ".join(humanized_sentences)
         
-        # Final polish
-        result = self._add_emotional_touch(result)
+        # Apply additional techniques
+        if techniques:
+            result = self._additional_humanization(result, techniques)
+        
         result = self._fix_punctuation(result)
         
         return result
     
     def _expand_contractions(self, text: str) -> str:
-        """Expand contractions for formal tone"""
+        """Expand contractions"""
         contractions = {
             "don't": "do not", "doesn't": "does not", "didn't": "did not",
             "can't": "cannot", "couldn't": "could not", "wouldn't": "would not",
             "shouldn't": "should not", "won't": "will not", "isn't": "is not",
             "aren't": "are not", "wasn't": "was not", "weren't": "were not",
-            "haven't": "have not", "hasn't": "has not", "hadn't": "had not",
-            "it's": "it is", "that's": "that is", "there's": "there is"
+            "haven't": "have not", "hasn't": "has not", "hadn't": "had not"
         }
         
         for cont, exp in contractions.items():
@@ -149,15 +123,9 @@ class HumanizeAIPro:
         return text
     
     def _apply_transformations(self, sentence: str, pass_num: int) -> str:
-        """
-        Apply transformations with decreasing pickiness
-        Pass 0: 99.9% replacement
-        Pass 8: 95% replacement
-        """
-        
+        """Apply synonym transformations"""
         replacement_rate = 0.999 - (pass_num * 0.01)
         
-        # Sort by phrase length (longest first)
         sorted_transforms = sorted(
             self.transformations.items(),
             key=lambda x: len(x[0].split()),
@@ -169,7 +137,6 @@ class HumanizeAIPro:
                 if random.random() < replacement_rate:
                     replacement = random.choice(options)
                     
-                    # Preserve capitalization
                     def preserve_case(match):
                         matched = match.group(0)
                         if matched[0].isupper():
@@ -187,15 +154,12 @@ class HumanizeAIPro:
         return sentence
     
     def _add_natural_flow(self, sentence: str) -> str:
-        """Add natural, conversational flow"""
-        
-        # Replace formal connectors with casual ones
+        """Add natural conversational flow"""
         formal_to_casual = {
-            "In addition,": ["Also,", "Plus,", "And,"],
-            "Moreover,": ["Also,", "Plus,", "What's more,"],
-            "Furthermore,": ["Also,", "Plus,", "On top of that,"],
-            "Therefore,": ["So,", "Thus,", "Because of this,"],
-            "Consequently,": ["So,", "As a result,", "Because of this,"],
+            "In addition,": ["Also,", "Plus,"],
+            "Moreover,": ["Also,", "What's more,"],
+            "Furthermore,": ["Also,", "Plus,"],
+            "Therefore,": ["So,", "Thus,"],
         }
         
         for formal, casuals in formal_to_casual.items():
@@ -205,18 +169,12 @@ class HumanizeAIPro:
         
         return sentence
     
-    def _vary_sentence_structure(self, sentence: str, position: int) -> str:
-        """Vary sentence structure for naturalness"""
-        
-        # 80% chance to create complex sentences
+    def _vary_structure(self, sentence: str, position: int) -> str:
+        """Vary sentence structure"""
         if random.random() < 0.80 and len(sentence.split()) > 10:
-            # Split and reconnect with natural connectors
             parts = sentence.split('. ')
             if len(parts) >= 2:
-                connectors = [
-                    ", and", ", which", ", but", ", so", 
-                    "—", "; thus,", ", meaning"
-                ]
+                connectors = [", and", ", which", ", but", ", so", "—"]
                 connector = random.choice(connectors)
                 sentence = f"{parts[0]}{connector} {parts[1][0].lower()}{parts[1][1:]}"
                 if len(parts) > 2:
@@ -224,76 +182,128 @@ class HumanizeAIPro:
         
         return sentence
     
-    def _add_conversational_elements(self, sentence: str, position: int) -> str:
+    def _add_conversational(self, sentence: str, position: int) -> str:
         """Add conversational elements"""
+        starters = ["Basically,", "Actually,", "In fact,", "Essentially,"]
         
-        # 25% chance to add sentence starter
         if position > 0 and random.random() < 0.25:
-            if not any(sentence.startswith(s) for s in self.sentence_starters + ["The", "A", "This", "It"]):
-                starter = random.choice(self.sentence_starters)
-                sentence = f"{starter} {sentence[0].lower()}{sentence[1:]}"
+            if not any(sentence.startswith(s) for s in starters + ["The", "A", "This"]):
+                sentence = f"{random.choice(starters)} {sentence[0].lower()}{sentence[1:]}"
         
-        # Add emphasis words occasionally
-        emphasis_words = [
+        emphasis = [
             (r" is ", " really is "),
-            (r" are ", " really are "),
-            (r" has ", " actually has "),
+            (r" are ", " actually are "),
             (r" shows ", " clearly shows "),
         ]
         
         if random.random() < 0.15:
-            pattern, replacement = random.choice(emphasis_words)
+            pattern, replacement = random.choice(emphasis)
             sentence = re.sub(pattern, replacement, sentence, count=1)
         
         return sentence
     
-    def _personalize_content(self, sentence: str) -> str:
-        """Personalize content for relatability"""
+    def _additional_humanization(self, text: str, techniques: list) -> str:
+        """Apply additional humanization techniques"""
+        sentences = sent_tokenize(text)
         
-        # Make passive constructions more active
-        passive_to_active = [
-            (r"is included", "includes"),
-            (r"are included", "include"),
-            (r"is ensured", "ensures"),
-            (r"is revealed", "reveals"),
-        ]
+        # Typos
+        if "typos" in techniques:
+            common_typos = {
+                "the": ["teh"], "and": ["adn"], "that": ["taht"],
+                "with": ["wtih"], "this": ["tihs"], "from": ["form"],
+                "have": ["ahve"], "would": ["woudl"], "their": ["thier"]
+            }
+            for i in range(len(sentences)):
+                if random.random() < 0.2:
+                    words = sentences[i].split()
+                    for j in range(len(words)):
+                        if words[j].lower() in common_typos and random.random() < 0.3:
+                            words[j] = random.choice(common_typos[words[j].lower()])
+                    sentences[i] = ' '.join(words)
         
-        for passive, active in passive_to_active:
-            if random.random() < 0.4:
-                sentence = re.sub(passive, active, sentence, count=1, flags=re.IGNORECASE)
+        # Punctuation variation
+        if "punctuation" in techniques:
+            for i in range(len(sentences)):
+                if random.random() < 0.15:
+                    if sentences[i].endswith('.'):
+                        sentences[i] = sentences[i][:-1] + '..'
         
-        # Add human perspective
-        if "citizens" in sentence.lower() and random.random() < 0.3:
-            sentence = sentence.replace("citizens", "people", 1)
+        # Repetition
+        if "repetition" in techniques:
+            for i in range(len(sentences)):
+                if random.random() < 0.1:
+                    words = sentences[i].split()
+                    if len(words) > 4:
+                        idx = random.randint(0, len(words) - 1)
+                        if len(words[idx]) > 3:
+                            words.insert(idx + 1, words[idx])
+                            sentences[i] = ' '.join(words)
         
-        return sentence
+        # Formatting
+        if "formatting" in techniques:
+            for i in range(len(sentences)):
+                if random.random() < 0.08:
+                    words = sentences[i].split()
+                    if len(words) > 3:
+                        idx = random.randint(0, len(words) - 1)
+                        if len(words[idx]) > 3:
+                            words[idx] = f"*{words[idx]}*"
+                            sentences[i] = ' '.join(words)
+        
+        return ' '.join(sentences)
+
+
+def calculate_humanness_score(text: str) -> tuple:
+    """Calculate humanness score and metrics"""
+    words = text.split()
+    word_count = len(words)
     
-    def _add_emotional_touch(self, text: str) -> str:
-        """Add emotional resonance (sentiment analysis simulation)"""
-        
-        # Strengthen negative sentiments naturally
-        sentiment_enhancers = {
-            "concerning": "quite concerning",
-            "worrying": "really worrying",
-            "poor": "pretty poor",
-            "weak": "rather weak",
-        }
-        
-        for original, enhanced in sentiment_enhancers.items():
-            if original in text.lower() and random.random() < 0.3:
-                text = re.sub(
-                    r'\b' + original + r'\b',
-                    enhanced,
-                    text,
-                    count=1,
-                    flags=re.IGNORECASE
-                )
-        
-        return text
+    if word_count == 0:
+        return 0, {}
+    
+    sentences = sent_tokenize(text)
+    sentence_count = len(sentences)
+    
+    # Calculate metrics
+    avg_word_length = sum(len(word) for word in words) / word_count
+    avg_sentence_length = word_count / sentence_count if sentence_count > 0 else 0
+    
+    sent_lengths = [len(s.split()) for s in sentences]
+    sentence_variance = sum((x - avg_sentence_length) ** 2 for x in sent_lengths) / len(sent_lengths) if sent_lengths else 0
+    
+    contractions = len(re.findall(r"\b\w+'[a-z]+\b", text))
+    transitions = len(re.findall(r'\b(however|nevertheless|therefore|thus|furthermore|moreover|actually|basically)\b', text.lower()))
+    fillers = len(re.findall(r'\b(um|like|you know|sort of|basically|actually|just)\b', text.lower()))
+    
+    # Calculate score
+    score = 50
+    
+    if sentence_variance > 10:
+        score += 20
+    elif sentence_variance > 5:
+        score += 10
+    
+    score += min(15, contractions * 3)
+    score += min(15, transitions * 3)
+    score += min(10, fillers * 2)
+    
+    score = max(0, min(100, score))
+    
+    metrics = {
+        "word_count": word_count,
+        "sentence_count": sentence_count,
+        "avg_word_length": avg_word_length,
+        "avg_sentence_length": avg_sentence_length,
+        "contractions": contractions,
+        "transitions": transitions,
+        "fillers": fillers
+    }
+    
+    return score, metrics
 
 
 def main():
-    """Streamlit application"""
+    """Streamlit app"""
     
     st.set_page_config(
         page_title="From AI to Human Written For Soumya ka dost... 😂😁",
@@ -308,78 +318,169 @@ def main():
         </style>
         """, unsafe_allow_html=True)
 
-    st.markdown("<div class='title'>From AI to Human Written For Soumya ka dost... 😂😁</div>", unsafe_allow_html=True)
-    st.markdown("<div class='subtitle'>Using HumanizeAI.io Professional Techniques</div>", unsafe_allow_html=True)
+    st.markdown("<div class='title'>🤖→🧠 AI Text Humanizer</div>", unsafe_allow_html=True)
+    st.markdown("<div class='subtitle'>For Soumya ka dost... 😂😁</div>", unsafe_allow_html=True)
 
-    # Mode selection
-    mode = st.selectbox(
-        "Select Humanization Mode:",
-        ["Basic (3 passes)", "Aggressive (6 passes)", "Enhanced (9 passes)"],
-        index=2
-    )
-    
-    mode_name = mode.split()[0]
+    # Create tabs
+    tab1, tab2, tab3 = st.tabs(["🔄 Text Humanizer", "🔍 AI Detection Check", "ℹ️ About"])
 
-    user_text = st.text_area("Enter your AI-generated text:", height=250)
-    uploaded_file = st.file_uploader("Or upload a .txt file:", type=["txt"])
-    
-    if uploaded_file:
-        user_text = uploaded_file.read().decode("utf-8", errors="ignore")
+    with tab1:
+        # Sidebar settings
+        st.sidebar.title("⚙️ Advanced Settings")
+        
+        mode = st.sidebar.selectbox(
+            "Humanization Level:",
+            ["Basic (3 passes)", "Aggressive (6 passes)", "Enhanced (9 passes)"],
+            index=2
+        )
+        mode_name = mode.split()[0]
+        
+        st.sidebar.subheader("📝 Additional Techniques")
+        add_typos = st.sidebar.checkbox("Add occasional typos", value=False)
+        vary_punctuation = st.sidebar.checkbox("Vary punctuation", value=True)
+        add_repetition = st.sidebar.checkbox("Add natural repetition", value=False)
+        adjust_formatting = st.sidebar.checkbox("Adjust formatting (italics)", value=True)
+        
+        # Main content
+        input_text = st.text_area("📥 Enter AI-generated text to humanize:", height=250)
+        
+        uploaded_file = st.file_uploader("📎 Or upload a .txt file:", type=["txt"])
+        if uploaded_file:
+            input_text = uploaded_file.read().decode("utf-8", errors="ignore")
+        
+        if st.button("🚀 Humanize Text", type="primary", use_container_width=True):
+            if not input_text.strip():
+                st.warning("⚠️ Please enter some text to humanize")
+            else:
+                with st.spinner(f"🔄 Humanizing with {mode_name} mode..."):
+                    progress_bar = st.progress(0)
+                    for i in range(100):
+                        time.sleep(0.01)
+                        progress_bar.progress(i + 1)
+                    
+                    techniques = []
+                    if add_typos:
+                        techniques.append("typos")
+                    if vary_punctuation:
+                        techniques.append("punctuation")
+                    if add_repetition:
+                        techniques.append("repetition")
+                    if adjust_formatting:
+                        techniques.append("formatting")
+                    
+                    humanizer = AdvancedHumanizer()
+                    transformed = humanizer.humanize_text(input_text, mode_name, techniques)
+                    
+                    st.success("✅ Text humanized successfully!")
+                    
+                    # Display results
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.subheader("📝 Original Text")
+                        st.text_area("", value=input_text, height=300, disabled=True, key="orig")
+                    
+                    with col2:
+                        st.subheader("✨ Humanized Text")
+                        st.text_area("", value=transformed, height=300, key="trans")
+                    
+                    # Statistics
+                    input_words = len(word_tokenize(input_text))
+                    output_words = len(word_tokenize(transformed))
+                    
+                    st.info(f"📊 **Stats**: {input_words} words → {output_words} words | Mode: {mode_name}")
+                    
+                    st.download_button(
+                        "⬇️ Download Humanized Text",
+                        transformed,
+                        "humanized_text.txt",
+                        use_container_width=True
+                    )
 
-    col1, col2 = st.columns([3, 1])
-    
-    with col1:
-        transform_button = st.button("🚀 Humanize Text", type="primary", use_container_width=True)
-    
-    with col2:
-        st.write("")  # Spacing
+    with tab2:
+        st.markdown("## 🔍 AI Detection Check")
+        st.markdown("Check how human-like your text appears to AI detectors.")
+        
+        check_text = st.text_area("📥 Paste text to analyze:", height=200)
+        
+        if st.button("🔍 Analyze Text", type="primary"):
+            if not check_text.strip():
+                st.warning("⚠️ Please enter text to analyze")
+            else:
+                with st.spinner("🔄 Analyzing..."):
+                    time.sleep(2)
+                    
+                    score, metrics = calculate_humanness_score(check_text)
+                    
+                    # Display score
+                    col1, col2, col3 = st.columns([1, 2, 1])
+                    with col2:
+                        color = 'green' if score > 70 else 'orange' if score > 40 else 'red'
+                        st.markdown(f"""
+                        <div style="text-align:center">
+                            <h3>Human-likeness Score</h3>
+                            <div style="margin:20px auto; width:200px; height:200px; position:relative;">
+                                <div style="position:absolute; width:200px; height:200px; border-radius:50%; background:conic-gradient({color} 0%, {color} {score}%, #e0e0e0 {score}%, #e0e0e0 100%);"></div>
+                                <div style="position:absolute; width:150px; height:150px; border-radius:50%; background:white; top:25px; left:25px; display:flex; align-items:center; justify-content:center;">
+                                    <span style="font-size:40px; font-weight:bold;">{score}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    
+                    # Metrics
+                    st.subheader("📊 Text Metrics")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("Word Count", metrics["word_count"])
+                        st.metric("Sentence Count", metrics["sentence_count"])
+                        st.metric("Avg Word Length", f"{metrics['avg_word_length']:.2f}")
+                    with col2:
+                        st.metric("Avg Sentence Length", f"{metrics['avg_sentence_length']:.2f}")
+                        st.metric("Contractions", metrics["contractions"])
+                        st.metric("Transitions", metrics["transitions"])
+                    
+                    # Risk assessment
+                    if score > 70:
+                        st.success("✅ LOW RISK: Likely to pass AI detection")
+                    elif score > 40:
+                        st.warning("⚠️ MODERATE RISK: May need more humanization")
+                    else:
+                        st.error("❌ HIGH RISK: Needs significant humanization")
 
-    if transform_button:
-        if not user_text.strip():
-            st.warning("⚠️ Please enter some text to humanize")
-        else:
-            with st.spinner(f"🔄 Humanizing text using {mode_name} mode..."):
-                humanizer = HumanizeAIPro()
-                transformed = humanizer.humanize_text(user_text, mode_name)
-                
-                st.success("✅ Text humanized successfully!")
-                
-                # Display results
-                col1, col2 = st.columns(2)
-                
-                with col1:
-                    st.subheader("📝 Original Text")
-                    st.text_area("", value=user_text, height=300, disabled=True, key="original")
-                
-                with col2:
-                    st.subheader("✨ Humanized Text")
-                    st.text_area("", value=transformed, height=300, key="transformed")
-                
-                # Statistics
-                input_words = len(word_tokenize(user_text))
-                output_words = len(word_tokenize(transformed))
-                
-                st.info(f"📊 **Statistics**: {input_words} words → {output_words} words | Mode: {mode_name}")
-                
-                # Download button
-                st.download_button(
-                    label="⬇️ Download Humanized Text",
-                    data=transformed,
-                    file_name="humanized_text.txt",
-                    mime="text/plain",
-                    use_container_width=True
-                )
+    with tab3:
+        st.markdown("""
+        ## ℹ️ About This Tool
+        
+        This advanced AI text humanizer transforms AI-generated content into natural, human-like writing.
+        
+        ### 🎯 Features
+        - ✅ **Natural Language Processing** - 9-pass transformation system
+        - ✅ **Sentiment Analysis** - Emotional touch preservation
+        - ✅ **Context Preservation** - Maintains original meaning
+        - ✅ **Multiple Modes** - Basic, Aggressive, Enhanced
+        - ✅ **Additional Techniques** - Typos, punctuation, formatting
+        
+        ### 🔧 How It Works
+        1. **Multi-pass transformation** (3-9 passes based on mode)
+        2. **Synonym replacement** with contextual accuracy
+        3. **Sentence restructuring** for natural flow
+        4. **Conversational elements** addition
+        5. **Optional techniques** for extra humanization
+        
+        ### 📊 Detection Analysis
+        - Analyzes sentence variety, transitions, contractions
+        - Provides humanness score (0-100%)
+        - Suggests improvements
+        
+        ### 🔒 Privacy
+        All processing happens locally - no data sent externally.
+        
+        ---
+        
+        Made with ❤️ and assembled by joy 💫
+        """)
 
-    st.markdown("---")
-    st.markdown("### 🎯 Features")
-    st.markdown("""
-    - ✅ **Natural Language Processing (NLP)** - Converts AI text to human-like flow
-    - ✅ **Sentiment Analysis** - Adds emotional touch to content
-    - ✅ **Personalization** - Makes content relatable and engaging
-    - ✅ **Context Preservation** - Maintains original meaning
-    - ✅ **Multiple Modes** - Basic, Aggressive, and Enhanced options
-    """)
-    
     st.caption("Made with ❤️ and assembled by joy 💫")
 
 
