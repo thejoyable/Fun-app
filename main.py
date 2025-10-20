@@ -19,10 +19,12 @@ def main():
         page_icon="😂",
         layout="wide",
         initial_sidebar_state="expanded",
+        
         menu_items={
-            'Made with and Assembled by JOY': "# Made with and Assembled by JOY'!!!!!! YAYYYY"
+
         }
     )
+st.caption("Made with and assembled by joy 💫")
 
     # --- Custom CSS for Title Centering and Additional Styling ---
     st.markdown(
