@@ -75,6 +75,26 @@ class EnhancedAcademicHumanizer:
             "enjoyed": ["experienced", "appreciated", "relished"]
         }
     
+    def _fix_punctuation_spacing(self, text: str) -> str:
+        """Fix spacing around punctuation marks"""
+        # Remove spaces before punctuation
+        text = re.sub(r'\s+([.,;:!?])', r'\1', text)
+        
+        # Ensure single space after punctuation (except at end of string)
+        text = re.sub(r'([.,;:!?])([^\s])', r'\1 \2', text)
+        
+        # Fix apostrophes - remove spaces around them
+        text = re.sub(r"\s+'|'\s+", "'", text)
+        
+        # Fix quotation marks
+        text = re.sub(r'\s+"', '"', text)
+        text = re.sub(r'"\s+', '"', text)
+        
+        # Fix multiple spaces
+        text = re.sub(r'\s+', ' ', text)
+        
+        return text.strip()
+    
     def humanize_text(self, text: str) -> str:
         """Main humanization pipeline"""
         sentences = sent_tokenize(text)
@@ -90,7 +110,12 @@ class EnhancedAcademicHumanizer:
             
             humanized_sentences.append(sentence)
         
-        return " ".join(humanized_sentences)
+        result = " ".join(humanized_sentences)
+        
+        # Fix punctuation spacing at the end
+        result = self._fix_punctuation_spacing(result)
+        
+        return result
     
     def _expand_contractions(self, text: str) -> str:
         """Expand contractions for formal tone"""
@@ -134,7 +159,12 @@ class EnhancedAcademicHumanizer:
         words = word_tokenize(sentence)
         result = []
         
-        for word in words:
+        for i, word in enumerate(words):
+            # Skip if it's punctuation
+            if word in '.,;:!?\'"':
+                result.append(word)
+                continue
+                
             lower_word = word.lower()
             
             # Replace with synonym if available and probability check
@@ -149,6 +179,7 @@ class EnhancedAcademicHumanizer:
             else:
                 result.append(word)
         
+        # Join with spaces and let fix_punctuation_spacing handle it
         return " ".join(result)
     
     def _restructure_sentence(self, sentence: str, position: int) -> str:
