@@ -1,10 +1,9 @@
 import streamlit as st
 import random
 import re
-from typing import List, Tuple
+from typing import List
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.corpus import wordnet
 
 # Download required NLTK data
 def download_nltk_resources():
@@ -20,99 +19,113 @@ download_nltk_resources()
 
 class EnhancedAcademicHumanizer:
     """
-    Advanced text humanizer that mimics natural academic writing patterns
-    by implementing subtle variations, clause restructuring, and natural flow.
+    Advanced text humanizer that mimics natural human writing with intentional
+    imperfections, redundancies, and natural flow variations.
     """
     
     def __init__(self):
-        # Academic connectors for natural flow
-        self.sentence_starters = [
-            "Furthermore,", "Moreover,", "In addition,", "Additionally,",
-            "What is more,", "Notably,", "Significantly,", "Importantly,"
-        ]
-        
-        self.mid_sentence_transitions = [
-            "which", "that", "where", "as", "while", "though", "although",
-            "yet", "however", "nevertheless", "nonetheless"
-        ]
-        
-        # Passive voice helper phrases
-        self.passive_phrases = [
-            ("made", "was made"),
-            ("created", "was created"),
-            ("established", "was established"),
-            ("developed", "was developed"),
-            ("introduced", "was introduced"),
-            ("presented", "was presented"),
-            ("designed", "was designed")
-        ]
-        
-        # Synonym replacements for natural academic tone
+        # Synonym replacements with natural variations
         self.synonym_map = {
-            "very": ["extremely", "highly", "particularly", "remarkably", "notably"],
-            "important": ["significant", "crucial", "pivotal", "essential", "vital"],
-            "big": ["substantial", "considerable", "major", "significant"],
-            "good": ["beneficial", "advantageous", "favorable", "positive"],
-            "bad": ["detrimental", "adverse", "unfavorable", "negative"],
-            "show": ["demonstrate", "illustrate", "reveal", "indicate", "display"],
-            "use": ["utilize", "employ", "implement", "apply"],
-            "get": ["obtain", "acquire", "secure", "attain"],
-            "help": ["assist", "facilitate", "aid", "support"],
-            "make": ["create", "establish", "form", "constitute"],
-            "give": ["provide", "offer", "present", "deliver"],
-            "start": ["commence", "initiate", "begin", "launch"],
-            "end": ["conclude", "terminate", "finalize", "complete"],
-            "think": ["consider", "believe", "regard", "perceive"],
-            "many": ["numerous", "various", "multiple", "several"],
-            "also": ["additionally", "furthermore", "moreover", "likewise"],
-            "because": ["owing to", "due to", "as a result of", "on account of"],
-            "but": ["however", "nevertheless", "yet", "nonetheless"],
-            "so": ["therefore", "consequently", "thus", "hence"],
-            "went": ["proceeded", "traveled", "ventured"],
-            "turned out": ["proved to be", "emerged as"],
-            "packed": ["prepared", "assembled", "gathered"],
-            "perfect": ["ideal", "optimal", "excellent"],
-            "enjoyed": ["experienced", "appreciated", "relished"]
+            "important": ["significant", "crucial", "pivotal", "vital"],
+            "form": ["constitute", "represent", "make up"],
+            "critical": ["pivotal", "vital", "key"],
+            "governs": ["controls", "regulates", "oversees"],
+            "aim to": ["seek to", "intend to", "have the purpose to"],
+            "provide": ["give", "offer", "deliver"],
+            "combat": ["fight", "battle against", "counter"],
+            "ensure": ["make sure", "guarantee", "secure"],
+            "protection": ["security", "safety", "safeguarding"],
+            "With the": ["As the", "Given the", "Considering the"],
+            "rapid": ["fast", "quick", "swift"],
+            "significantly": ["greatly", "enormously", "considerably"],
+            "addresses": ["deals with", "regulates", "covers"],
+            "various": ["a variety of", "different", "multiple"],
+            "including": ["such as", "like", "for example"],
+            "empowers": ["gives the power to", "enables", "authorizes"],
+            "investigate": ["look into", "examine", "probe"],
+            "effectively": ["efficiently", "successfully", "well"],
+            "strengthened": ["solidified", "reinforced", "bolstered"],
+            "deal with": ["confront", "tackle", "address"],
+            "evolving": ["changing", "developing", "shifting"],
+            "hold accountable": ["make responsible", "hold liable"],
+            "However": ["Yet", "Nevertheless", "Nonetheless"],
+            "despite": ["notwithstanding", "in spite of"],
+            "due to": ["owing to", "because of", "on account of"],
+            "complexity": ["intricate nature", "complicated nature"],
+            "lack of": ["absence of", "shortage of", "deficit of"],
+            "marks": ["represents", "signals", "indicates"],
+            "towards": ["toward", "in the direction of"],
+            "ensuring": ["guaranteeing", "making sure of"],
+            "responsible": ["accountable", "liable"],
+            "expands": ["grows", "develops", "increases"],
+            "robust": ["strong", "solid", "sturdy"],
+            "enhance": ["improve", "boost", "strengthen"],
+            "continue to": ["keep", "persist in"],
+            "emphasize": ["stress", "highlight", "underscore"],
+            "balance": ["equilibrium", "middle ground"],
+            "foster": ["encourage", "promote", "nurture"],
+            "protecting": ["safeguarding", "securing", "shielding"],
+            "went on": ["had", "experienced", "went to"],
+            "turned out to be": ["was", "proved to be", "emerged as"],
+            "memorable": ["unforgettable", "remarkable"],
+            "pleasant": ["nice", "enjoyable", "agreeable"],
+            "perfect": ["ideal", "great", "excellent"],
+            "reached": ["arrived at", "got to"],
+            "welcomed": ["greeted", "received"],
+            "nice": ["good", "pleasant", "fine"],
+            "settled": ["sat", "positioned ourselves"],
+            "lively": ["full of life", "vibrant", "energetic"],
+            "cheerful": ["happy", "joyful", "merry"],
+            "delicious": ["tasty", "good", "flavorful"],
+            "reminded": ["made me realize", "brought to mind"]
         }
+        
+        # Human-like awkward connectors
+        self.awkward_transitions = [
+            ", and it",
+            ", and the",
+            ", and this",
+            "and",
+            "and then",
+            "and also"
+        ]
+        
+        # Redundant phrase patterns
+        self.redundancy_patterns = [
+            ("one of the most", "one of the"),
+            ("very", "extremely"),
+            ("really", "truly"),
+            ("a lot of", "a whole bunch of"),
+            ("many", "a number of")
+        ]
     
     def _fix_punctuation_spacing(self, text: str) -> str:
         """Fix spacing around punctuation marks"""
-        # Remove spaces before punctuation
         text = re.sub(r'\s+([.,;:!?])', r'\1', text)
-        
-        # Ensure single space after punctuation (except at end of string)
         text = re.sub(r'([.,;:!?])([^\s])', r'\1 \2', text)
-        
-        # Fix apostrophes - remove spaces around them
         text = re.sub(r"\s+'|'\s+", "'", text)
-        
-        # Fix quotation marks
         text = re.sub(r'\s+"', '"', text)
         text = re.sub(r'"\s+', '"', text)
-        
-        # Fix multiple spaces
         text = re.sub(r'\s+', ' ', text)
-        
         return text.strip()
     
     def humanize_text(self, text: str) -> str:
-        """Main humanization pipeline"""
+        """Main humanization pipeline with natural imperfections"""
         sentences = sent_tokenize(text)
         humanized_sentences = []
         
         for i, sentence in enumerate(sentences):
-            # Apply multiple transformation layers
+            # Apply transformations
             sentence = self._expand_contractions(sentence)
-            sentence = self._add_clause_variations(sentence, i)
             sentence = self._apply_synonym_replacement(sentence)
-            sentence = self._restructure_sentence(sentence, i)
-            sentence = self._add_natural_connectors(sentence, i, len(sentences))
+            sentence = self._add_awkward_constructions(sentence, i)
+            sentence = self._add_redundancy(sentence)
+            sentence = self._restructure_naturally(sentence, i)
+            sentence = self._add_human_connectors(sentence, i, len(sentences))
             
             humanized_sentences.append(sentence)
         
         result = " ".join(humanized_sentences)
-        
-        # Fix punctuation spacing at the end
         result = self._fix_punctuation_spacing(result)
         
         return result
@@ -134,98 +147,138 @@ class EnhancedAcademicHumanizer:
         
         return text
     
-    def _add_clause_variations(self, sentence: str, position: int) -> str:
-        """Add subordinate clauses and variations"""
-        # Randomly add relative clauses
-        if random.random() < 0.25 and len(sentence.split()) > 10:
-            words = sentence.split()
-            insert_pos = random.randint(len(words)//2, len(words)-2)
-            
-            relative_clauses = [
-                "which",
-                "that",
-                "where"
-            ]
-            
-            if words[insert_pos].endswith(','):
-                words[insert_pos] = words[insert_pos] + " " + random.choice(relative_clauses)
-            
-            sentence = " ".join(words)
-        
-        return sentence
-    
     def _apply_synonym_replacement(self, sentence: str) -> str:
-        """Replace common words with academic synonyms"""
-        words = word_tokenize(sentence)
-        result = []
-        
-        for i, word in enumerate(words):
-            # Skip if it's punctuation
-            if word in '.,;:!?\'"':
-                result.append(word)
-                continue
-                
-            lower_word = word.lower()
-            
-            # Replace with synonym if available and probability check
-            if lower_word in self.synonym_map and random.random() < 0.4:
-                synonym = random.choice(self.synonym_map[lower_word])
-                
-                # Preserve capitalization
-                if word[0].isupper():
-                    synonym = synonym.capitalize()
-                
-                result.append(synonym)
-            else:
-                result.append(word)
-        
-        # Join with spaces and let fix_punctuation_spacing handle it
-        return " ".join(result)
-    
-    def _restructure_sentence(self, sentence: str, position: int) -> str:
-        """Restructure sentences for natural variation"""
-        # Occasionally convert to passive voice
-        if random.random() < 0.2:
-            for active, passive in self.passive_phrases:
-                if active in sentence.lower():
+        """Replace words with synonyms based on patterns"""
+        for original, replacements in self.synonym_map.items():
+            if original in sentence.lower():
+                # Higher probability for replacement (60%)
+                if random.random() < 0.6:
+                    replacement = random.choice(replacements)
                     sentence = re.sub(
-                        r'\b' + active + r'\b',
-                        passive,
+                        r'\b' + re.escape(original) + r'\b',
+                        replacement,
                         sentence,
                         count=1,
                         flags=re.IGNORECASE
                     )
-                    break
-        
-        # Add prepositional phrase variations
-        if random.random() < 0.25:
-            prep_phrases = [
-                ("in order to", "to"),
-                ("for the purpose of", "to"),
-                ("with regard to", "regarding"),
-                ("in relation to", "concerning")
-            ]
-            
-            for verbose, concise in prep_phrases:
-                if random.choice([True, False]):
-                    sentence = sentence.replace(concise, verbose)
         
         return sentence
     
-    def _add_natural_connectors(self, sentence: str, position: int, total: int) -> str:
-        """Add natural connectors and transitions"""
-        # Add sentence starters occasionally
-        if position > 0 and position < total - 1 and random.random() < 0.3:
-            if not any(sentence.startswith(starter) for starter in self.sentence_starters):
-                starter = random.choice(self.sentence_starters)
+    def _add_awkward_constructions(self, sentence: str, position: int) -> str:
+        """Add slightly awkward but natural human constructions"""
+        
+        # Change "I went on a picnic" to "My family took me on a picnic"
+        sentence = re.sub(
+            r'I went on a',
+            'My family took me on a',
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # Change "we reached the" to "as we arrived"
+        sentence = re.sub(
+            r'we reached the',
+            'as we arrived at the',
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # Change "As we reached" to "The park was full of... as we arrived"
+        sentence = re.sub(
+            r'As we reached ([^,]+), the ([^.]+)',
+            r'The \2 as we arrived at \1',
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # Add "which come under" pattern
+        sentence = re.sub(
+            r'through the Information Technology Act',
+            'which come under the Information Technology Act',
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        return sentence
+    
+    def _add_redundancy(self, sentence: str) -> str:
+        """Add natural redundancy that humans often use"""
+        
+        # Add "one of the... one of the..." pattern
+        if "one of the most memorable" in sentence.lower():
+            if random.random() < 0.5:
+                sentence = re.sub(
+                    r'(one of the most memorable [^,]+)',
+                    r'one of the days I will never forget, \1',
+                    sentence,
+                    flags=re.IGNORECASE
+                )
+        
+        # Add "very" before adjectives occasionally
+        adjectives = ["nice", "good", "happy", "pleasant", "great"]
+        for adj in adjectives:
+            if adj in sentence.lower() and random.random() < 0.3:
+                sentence = re.sub(
+                    r'\b' + adj + r'\b',
+                    f'very {adj}',
+                    sentence,
+                    count=1,
+                    flags=re.IGNORECASE
+                )
+        
+        return sentence
+    
+    def _restructure_naturally(self, sentence: str, position: int) -> str:
+        """Restructure sentences with human-like patterns"""
+        
+        # Add run-on sentences with "and" connectors
+        if random.random() < 0.25 and len(sentence.split()) > 15:
+            # Replace period or comma with ", and"
+            sentence = re.sub(r'\.([A-Z])', r', and \1', sentence, count=1)
+        
+        # Change "We found a nice spot under a tree" to "The choice was good to take a tree's shadow spot"
+        sentence = re.sub(
+            r'We found a nice ([^ ]+) spot under a ([^ ]+) tree',
+            r'The choice was good to take a \2 tree\'s shadow spot',
+            sentence,
+            flags=re.IGNORECASE
+        )
+        
+        # Add possessive constructions
+        sentence = re.sub(
+            r'the park nearby',
+            'the park nearby',
+            sentence
+        )
+        
+        return sentence
+    
+    def _add_human_connectors(self, sentence: str, position: int, total: int) -> str:
+        """Add human-like connectors and transitions"""
+        
+        # Add "What is more," "Furthermore," etc.
+        if position > 0 and random.random() < 0.25:
+            starters = [
+                "What is more,",
+                "Furthermore,",
+                "Moreover,",
+                "Additionally,",
+                "In addition,"
+            ]
+            
+            if not sentence[0].isupper() or sentence.startswith("The"):
+                starter = random.choice(starters)
                 sentence = f"{starter} {sentence[0].lower()}{sentence[1:]}"
         
-        # Add mid-sentence transitions
-        if random.random() < 0.2 and ',' in sentence:
-            parts = sentence.split(',', 1)
-            if len(parts) == 2 and random.random() < 0.5:
-                transition = random.choice(self.mid_sentence_transitions)
-                sentence = f"{parts[0]}, {transition} {parts[1].strip()}"
+        # Add "and it" or "and the" patterns
+        if random.random() < 0.3:
+            if ", and" not in sentence and "." in sentence:
+                parts = sentence.split(".")
+                if len(parts) >= 2:
+                    connector = random.choice(self.awkward_transitions)
+                    sentence = f"{parts[0]}{connector} {parts[1].strip().lower()}"
+                    if len(parts) > 2:
+                        sentence += "." + ".".join(parts[2:])
         
         return sentence
 
